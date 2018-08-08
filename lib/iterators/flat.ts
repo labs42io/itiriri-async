@@ -1,10 +1,18 @@
 import { asyncIterable } from '../utils/asyncIterable';
 
-export async function flat<T>(iterables: AsyncIterable<AsyncIterable<T>>): Promise<AsyncIterable<T>>;
-export async function flat<T>(iterables: AsyncIterable<Iterable<T>>): Promise<AsyncIterable<T>>;
-export async function flat<T>(iterables: Iterable<AsyncIterable<T>>): Promise<AsyncIterable<T>>;
 export async function flat<T>(
-  iterables: Iterable<AsyncIterable<T>> | AsyncIterable<AsyncIterable<T>> | AsyncIterable<Iterable<T>>,
+  iterables: AsyncIterable<AsyncIterable<T>>,
+): Promise<AsyncIterable<T>>;
+export async function flat<T>(
+  iterables: AsyncIterable<Iterable<T>>,
+): Promise<AsyncIterable<T>>;
+export async function flat<T>(
+  iterables: Iterable<AsyncIterable<T>>,
+): Promise<AsyncIterable<T>>;
+export async function flat<T>(
+  iterables: Iterable<AsyncIterable<T>> |
+    AsyncIterable<AsyncIterable<T>> |
+    AsyncIterable<Iterable<T>>,
 ): Promise<AsyncIterable<T>> {
   return asyncIterable(async function* () {
     for await (const element of iterables) {
