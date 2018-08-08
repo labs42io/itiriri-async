@@ -57,7 +57,7 @@ describe('iterators/groupJoin', () => {
       const source = [
         Promise.resolve(1).finally(),
         Promise.reject(1).finally(),
-        Promise.resolve(1)
+        Promise.resolve(1),
       ];
       const q = groupJoin(fromArray(source), [], x => x, x => x, x => x);
 

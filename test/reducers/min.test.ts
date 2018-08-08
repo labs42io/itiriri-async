@@ -37,7 +37,7 @@ describe('reducers/min', () => {
       const source = [
         Promise.resolve(1).finally(),
         Promise.reject(1).finally(),
-        Promise.resolve(1)
+        Promise.resolve(1),
       ];
       const q = min(fromArray(source), x => x);
 

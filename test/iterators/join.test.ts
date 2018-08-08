@@ -56,7 +56,7 @@ describe('iterators/join', () => {
       const source = [
         Promise.resolve(1).finally(),
         Promise.reject(1).finally(),
-        Promise.resolve(1)
+        Promise.resolve(1),
       ];
       const q = join(fromArray(source), [], x => x, x => x, x => x);
 

@@ -69,7 +69,7 @@ describe('reducers/reduce', () => {
       const source = [
         Promise.resolve(1).finally(),
         Promise.reject(1).finally(),
-        Promise.resolve(1)
+        Promise.resolve(1),
       ];
       const q = reduce(fromArray(source), x => x);
 

@@ -44,7 +44,7 @@ describe('reducers/at', () => {
       const source = [
         Promise.resolve(1).finally(),
         Promise.reject(1).finally(),
-        Promise.resolve(1)
+        Promise.resolve(1),
       ];
       const q = nth(fromArray(source), 0);
 
@@ -57,7 +57,7 @@ describe('reducers/at', () => {
       // hitting all tests (coverage)
       const source = [
         Promise.reject(1).finally(),
-        Promise.resolve(1)
+        Promise.resolve(1),
       ];
       const q = nth(fromArray(source), 1);
 

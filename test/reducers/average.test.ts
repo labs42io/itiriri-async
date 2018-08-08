@@ -43,7 +43,7 @@ describe('reducers/average', () => {
       const source = [
         Promise.resolve(1).finally(),
         Promise.reject(1).finally(),
-        Promise.resolve(1)
+        Promise.resolve(1),
       ];
       const q = average(fromArray(source));
 
@@ -56,7 +56,7 @@ describe('reducers/average', () => {
       // hitting all tests (coverage)
       const source = [
         Promise.reject(1).finally(),
-        Promise.resolve(1)
+        Promise.resolve(1),
       ];
       const q = average(fromArray(source));
 

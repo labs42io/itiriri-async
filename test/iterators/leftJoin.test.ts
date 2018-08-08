@@ -61,7 +61,7 @@ describe('iterators/leftJoin', () => {
       const source = [
         Promise.resolve(1).finally(),
         Promise.reject(1).finally(),
-        Promise.resolve(1)
+        Promise.resolve(1),
       ];
       const q = leftJoin(fromArray(source), [], x => x, x => x, x => x);
 

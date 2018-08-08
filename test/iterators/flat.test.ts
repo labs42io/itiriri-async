@@ -74,7 +74,7 @@ describe('iterators/flat', () => {
         [
           Promise.resolve(1),
           Promise.reject(0).finally(),
-        ]
+        ],
       ];
       const q = flat(fromArray(source));
 
