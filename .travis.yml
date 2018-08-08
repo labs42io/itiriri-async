@@ -9,5 +9,5 @@ install:
     - "npm install"
     - "gulp tslint"
     - "gulp test"
-script: "npm run coverage"
+script: "gulp coverage"
 after_script: "npm install coveralls@3.0.0 && cat ./coverage/lcov.info | coveralls"
