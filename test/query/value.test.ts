@@ -407,7 +407,7 @@ describe('Query (value)', () => {
     });
   });
 
-  describe.only('When calling awaitAll', () => {
+  describe('When calling awaitAll', () => {
     it('Should return an Iterable', async () => {
       const q = queryAsync(fromArray([1, 2, 3, 2, 1]));
       const q1 = await q.awaitAll();
