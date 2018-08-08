@@ -187,7 +187,7 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
 
   flat<S>(
     selector: (element: T, index: number) => AsyncIterable<S>,
-  ): Promise<AsyncIterable<S>> {
+  ): AsyncIterable<S> {
     return flat<S>(this.map(selector));
   }
 

@@ -14,7 +14,7 @@ export interface AsyncIterableTransformation<T> extends AsyncIterable<T> {
   /**
    * Returns a sequence with all sub-sequences concatenated.
    * @param  {(element:T,index:number)=>Iterable<S>} selector sub-sequence
-   * @returns Promise<AsyncIterable<T>>
+   * @returns AsyncIterable<T>
    */
-  flat<S>(selector: (element: T, index: number) => AsyncIterable<S>): Promise<AsyncIterable<S>>;
+  flat<S>(selector: (element: T, index: number) => AsyncIterable<S>): AsyncIterable<S>;
 }

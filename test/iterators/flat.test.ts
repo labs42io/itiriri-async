@@ -18,7 +18,7 @@ describe('iterators/flat', () => {
   describe('When source is empty', () => {
     it('Should return completed iterator', async () => {
       const source = [];
-      const it = asyncIterator(await flat(fromArray(source)));
+      const it = asyncIterator(flat(fromArray(source)));
 
       expect(await it.next())
         .to.have.property('done')
@@ -32,7 +32,7 @@ describe('iterators/flat', () => {
       const right = fromArray([4, 5]);
       const source = [left, right];
       const iterator = flat(source);
-      const result = await toArray(await iterator);
+      const result = await toArray(iterator);
 
       expect(result).to.deep.equal([4, 5]);
     });
@@ -44,7 +44,7 @@ describe('iterators/flat', () => {
       const right = fromArray([]);
       const source = [left, right];
       const iterator = flat(source);
-      const result = await toArray(await iterator);
+      const result = await toArray(iterator);
 
       expect(result).to.deep.equal([1, 2, 3]);
     });
@@ -58,7 +58,7 @@ describe('iterators/flat', () => {
 
       const source = [source1, source2, source3];
       const iterator = flat(source);
-      const result = await toArray(await iterator);
+      const result = await toArray(iterator);
 
       expect(result).to.deep.equal([1, 2, 3, 4, 5, 1, 42]);
     });

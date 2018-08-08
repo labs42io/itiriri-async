@@ -57,7 +57,7 @@ describe('Query (transformation)', () => {
         return asyncIterable(async function* () { yield* res; });
       });
 
-      expect(await toArray(await q)).to.be.deep.equal([1, 2, 3, 4, 5]);
+      expect(await toArray(q)).to.be.deep.equal([1, 2, 3, 4, 5]);
     });
   });
 });
