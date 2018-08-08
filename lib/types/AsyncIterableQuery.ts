@@ -22,15 +22,15 @@ export interface AsyncIterableQuery<T> extends
 
   /**
    * Returns a sequence of keys for each index in the source sequence.
-   * @returns Iterable<number>
+   * @returns AsyncIterable<number>
    */
-  // keys(): IterableQuery<number>;
+  keys(): AsyncIterableQuery<number>;
 
   /**
    * Returns a sequence of values for each index in the source sequence.
-   * @returns Iterable<T>
+   * @returns AsyncIterable<T>
    */
-  // values(): IterableQuery<T>;
+  values(): AsyncIterableQuery<T>;
 
   /**
    * Concatenates the sequence with another one.
