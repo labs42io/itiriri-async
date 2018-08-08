@@ -28,6 +28,7 @@ import { average } from './reducers/average';
 import { forEach } from './reducers/forEach';
 import { awaitAll } from './reducers/awaitAll';
 import { slice } from './iterators/slice';
+import { leftJoin as syncLeftJoin } from 'itiriri/iterators/leftJoin';
 
 /**
  * Creates a queryable iterable.
@@ -251,30 +252,6 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
       joinSelector);
 
     return new QueryAsync(iterator);
-  }
-
-  rightJoin<TKey, TRight, TResult>(
-    other: Iterable<TRight>,
-    rightKeySelector: (element: TRight, index: number) => TKey,
-    leftKeySelector: (element: T, index: number) => TKey,
-    joinSelector: (right: TRight, left?: T) => TResult,
-  ): AsyncIterableQuery<TResult> {
-    throw Error('not implmeneted');
-    // let iterator: AsyncIterable<TResult>;
-
-    // this.toIterable().then((source) => {
-    //   iterator = leftJoin(
-    //     (async function* (e) { yield* e; })(other),
-    //     source,
-    //     rightKeySelector,
-    //     leftKeySelector,
-    //     joinSelector,
-    //   );
-    //   console.log('in');
-    // });
-    // console.log('out');
-
-    // return new QueryAsync(iterator);
   }
 
   groupJoin<TKey, TRight, TResult>(

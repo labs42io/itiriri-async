@@ -36,22 +36,6 @@ export interface AsyncIterableJoin<T> extends AsyncIterable<T> {
   ): AsyncIterableQuery<TResult>;
 
   /**
-   * Returns a sequence of correlated elements tranformation that match a given key.
-   * The transformation is called on an undefined left value if there is no match.
-   * @param other
-   * @param rightKeySelector right element key selector
-   * @param leftKeySelector left element key selector
-   * @param  {(right:TRight,left?:T)=>TResult} joinSelector transformation
-   * @returns AsyncIterable<TResult>
-   */
-  rightJoin<TKey, TRight, TResult>(
-    other: Iterable<TRight>,
-    rightKeySelector: (element: TRight, index: number) => TKey,
-    leftKeySelector: (element: T, index: number) => TKey,
-    joinSelector: (right: TRight, left?: T) => TResult,
-  ): AsyncIterableQuery<TResult>;
-
-  /**
    * Returns a sequence of correlated elements where each element from the current sequence
    * is matched with zero or more elements from the other sequence.
    * @param  {Iterable<TRight>} other
