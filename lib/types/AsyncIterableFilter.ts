@@ -35,13 +35,4 @@ export interface AsyncIterableFilter<T> extends AsyncIterable<T> {
    * @returns AsyncIterable<T>
    */
   slice(start?: number, end?: number): AsyncIterableQuery<T>;
-
-  /**
-   * Returns a sequence that skips elements and/or adds new elements.
-   * @param start index at which to start skip elements
-   * @param deleteCount the number of elements to skip
-   * @param items the elements to add at start index
-   * @returns AsyncIterable<T>
-   */
-  // splice(start: number, deleteCount: number, ...items: T[]): AsyncIterableQuery<T>;
 }
