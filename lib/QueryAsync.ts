@@ -62,8 +62,7 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
   }
 
   forEach(action: (element: T, index: number) => void): Promise<void> {
-    forEach(this.source, action);
-    return Promise.resolve();
+    return forEach(this.source, action);
   }
 
   concat(other: Promise<T> | AsyncIterable<T>): AsyncIterableQuery<T> {
