@@ -23,3 +23,4 @@
 
 
 rightjoin
+implement and test .flat()
