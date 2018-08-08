@@ -4,6 +4,7 @@ import { SpyAsyncIterable } from '../helpers/SpyAsyncIterable';
 import { queryAsync } from '../../lib/QueryAsync';
 import { fromArray } from '../helpers/asyncGenerators';
 import { toArray } from '../helpers/toArray';
+import { asyncIterable } from '../../lib/utils/asyncIterable';
 
 describe('Query (transformation)', () => {
   describe('When calling map', () => {
@@ -36,27 +37,27 @@ describe('Query (transformation)', () => {
     });
   });
 
-  // describe('When calling flat', () => {
-  //   it('Should be a deferred method', async () => {
-  //     const source = new SpyAsyncIterable(fromArray([]));
-  //     await queryAsync(source).flat(x => x);
+  describe('When calling flat', () => {
+    it('Should be a deferred method', async () => {
+      const source = new SpyAsyncIterable(fromArray([]));
+      await queryAsync(source).flat(x => x);
 
-  //     expect(source.wasIterated).to.be.false;
-  //   });
+      expect(source.wasIterated).to.be.false;
+    });
 
-  //   it('Should return array of 5 elements', async () => {
-  //     const source = [[1, 2, 3], [4, 5]];
-  //     const q = queryAsync(fromArray(source)).flat((elem, idx) => {
-  //       const res = [];
+    it('Should return array of 5 elements', async () => {
+      const source = [[1, 2, 3], [4, 5]];
+      const q = queryAsync(fromArray(source)).flat((elem, idx) => {
+        const res = [];
 
-  //       elem.forEach((element) => {
-  //         res.push(element);
-  //       });
+        for (const element of elem) {
+          res.push(element);
+        }
 
-  //       return res;
-  //     });
+        return asyncIterable(async function* () { yield* res; });
+      });
 
-  //     expect(await toArray(q)).to.be.deep.equal([1, 2, 3, 4, 5]);
-  //   });
-  // });
+      expect(await toArray(await q)).to.be.deep.equal([1, 2, 3, 4, 5]);
+    });
+  });
 });

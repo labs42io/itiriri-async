@@ -9,7 +9,6 @@ import { join } from './iterators/join';
 import { leftJoin } from './iterators/leftJoin';
 import { map } from './iterators/map';
 import { skip } from './iterators/skip';
-// import { splice } from './iterators/splice';
 import { take } from './iterators/take';
 import { nth } from './reducers/nth';
 import { length } from './reducers/length';
@@ -186,9 +185,10 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
     return new QueryAsync(map(this.source, selector));
   }
 
-  flat<S>(selector: (element: T, index: number) => AsyncIterable<S>): AsyncIterableQuery<S> {
-    throw Error('not implmeneted');
-    // return new QueryAsync(flat<S>(this.map(selector)));
+  flat<S>(
+    selector: (element: T, index: number) => AsyncIterable<S>,
+  ): Promise<AsyncIterable<S>> {
+    return flat<S>(this.map(selector));
   }
 
   // #endregion
