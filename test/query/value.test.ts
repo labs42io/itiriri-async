@@ -281,7 +281,7 @@ describe('Query (value)', () => {
 
   describe('When calling min', () => {
     it('Should return -1', async () => {
-      const source = [-1, 3, 4, 33, 2, 4];
+      const source = [-1, 3, 4, 33, -1, 4];
       const q = queryAsync(fromArray(source));
 
       expect(await q.min()).to.be.equal(-1);
