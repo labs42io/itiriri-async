@@ -53,7 +53,7 @@ Returns the average value.
 
 ```ts
 average(): number;
-average(selector: (element: T, index: number) => number): number;
+average(selector: (element: T, index: number) => number): Promise<number>;
 ```
 
 > Parameters
@@ -78,7 +78,7 @@ Concatenates the sequence with another one.
 > Syntax
 
 ```ts
-concat(other: Iterable<T>): IterableQuery<T>;
+concat(other: AsyncIterable<T>): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -101,8 +101,8 @@ Returns a sequence of unique elements.
 > Syntax
 
 ```ts
-distinct(): IterableQuery<T>;
-distinct<S>(selector: (element: T) => S): IterableQuery<T>;
+distinct(): AsyncIterableQuery<T>;
+distinct<S>(selector: (element: T) => S): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -128,7 +128,7 @@ Returns a sequence of key/value pair for each element and its index.
 > Syntax
 
 ```ts
-entries(): IterableQuery<[number, T]>;
+entries(): AsyncIterableQuery<[number, T]>;
 ```
 
 > Example
@@ -171,8 +171,8 @@ Returns a sequence of elements not contained in a given sequence.
 > Syntax
 
 ```ts
-exclude<S>(others: Iterable<T>): IterableQuery<T>;
-exclude<S>(others: Iterable<T>, selector: (element: T) => S): IterableQuery<T>;
+exclude<S>(others: Iterable<T>): AsyncIterableQuery<T>;
+exclude<S>(others: Iterable<T>, selector: (element: T) => S): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -199,7 +199,7 @@ Returns a sequence of elements that pass the predicate.
 > Syntax
 
 ```ts
-filter(predicate: (element: T, index: number) => boolean): IterableQuery<T>;
+filter(predicate: (element: T, index: number) => boolean): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -223,7 +223,7 @@ Finds the first element that satisfies the specified predicate.
 > Syntax
 
 ```ts
-find(predicate: (element: T, index: number) => boolean): T;
+find(predicate: (element: T, index: number) => boolean): Promise<T>;
 ```
 
 > Parameters
@@ -247,7 +247,7 @@ Finds the first index at which a given element satisfies the specified predicate
 > Syntax
 
 ```ts
-findIndex(predicate: (element: T, index: number) => boolean): number;
+findIndex(predicate: (element: T, index: number) => boolean): Promise<number>;
 ```
 
 > Parameters
@@ -271,7 +271,7 @@ Finds the last element that satisfies the specified predicate.
 > Syntax
 
 ```ts
-findLast(predicate: (element: T, index: number) => boolean): T;
+findLast(predicate: (element: T, index: number) => boolean): Promise<T>;
 ```
 
 > Parameters
@@ -295,7 +295,7 @@ Finds the last index at which a given element satisfies the specified predicate.
 > Syntax
 
 ```ts
-findLastIndex(predicate: (element: T, index: number) => boolean): number;
+findLastIndex(predicate: (element: T, index: number) => boolean): Promise<number>;
 ```
 
 > Parameters
@@ -319,7 +319,7 @@ Returns the first element in a sequence.
 > Syntax
 
 ```ts
-first(): T;
+first(): Promise<T>;
 ```
 
 For an empty sequence returns `undefined`.
@@ -340,11 +340,8 @@ Returns a sequence with all sub-sequences concatenated.
 > Syntax
 
 ```ts
-flat<S>(selector: (element: T, index: number) => Iterable<S>): IterableQuery<S>;
+flat<T>(): AsyncIterable<T>;
 ```
-
-> Parameters
-* `selector` - *(required)* a transformation function to map each element to a sequence
 
 > Example
 
@@ -364,7 +361,7 @@ Runs through every element and applies a given function.
 > Syntax
 
 ```ts
-forEach(action: (element: T, index: number) => void): void;
+forEach(action: (element: T, index: number) => void): Promise<void>;
 ```
 
 > Parameters
@@ -394,7 +391,7 @@ groupJoin<TKey, TRight, TResult>(
     leftKeySelector: (element: T, index: number) => TKey,
     rightKeySelector: (element: TRight, index: number) => TKey,
     joinSelector: (left: T, right: TRight[]) => TResult,
-  ): IterableQuery<TResult>;
+  ): AsyncIterableQuery<TResult>;
 ```
 
 > Parameters
@@ -445,8 +442,8 @@ Determines whether the sequence includes a certain element.
 > Syntax
 
 ```ts
-includes(element: T): boolean;
-includes(element: T, fromIndex: number): boolean;
+includes(element: T): Promise<boolean>;
+includes(element: T, fromIndex: number): Promise<boolean>;
 ```
 
 > Parameters
@@ -471,8 +468,8 @@ Returns the first (zero-based) index at which a given element can be found.
 > Syntax
 
 ```ts
-indexOf(element: T): number;
-indexOf(element: T, fromIndex: number): number;
+indexOf(element: T): Promise<number>;
+indexOf(element: T, fromIndex: number): Promise<number>;
 ```
 
 > Parameters
@@ -498,8 +495,8 @@ Returns a set intersection with a given sequence.
 > Syntax
 
 ```ts
-intersect(others: Iterable<T>): IterableQuery<T>;
-intersect<S>(other: Iterable<T>, selector: (element: T) => S): IterableQuery<T>;
+intersect(others: Iterable<T>): AsyncIterableQuery<T>;
+intersect<S>(other: Iterable<T>, selector: (element: T) => S): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -531,7 +528,7 @@ join<TKey, TRight, TResult>(
     leftKeySelector: (element: T, index: number) => TKey,
     rightKeySelector: (element: TRight, index: number) => TKey,
     joinSelector: (left: T, right: TRight) => TResult,
-  ): IterableQuery<TResult>;
+  ): AsyncIterableQuery<TResult>;
 ```
 
 > Parameters
@@ -571,7 +568,7 @@ Returns a sequence of keys for each index in the source sequence.
 > Syntax
 
 ```ts
-keys(): IterableQuery<number>;
+keys(): AsyncIterableQuery<number>;
 ```
 
 > Example
@@ -591,7 +588,7 @@ Returns the last element in a sequence.
 > Syntax
 
 ```ts
-last(): T;
+last(): Promise<T>;
 ```
 
 For an empty sequence returns `undefined`.
@@ -612,8 +609,8 @@ Returns the last index at which a given element can be found.
 > Syntax
 
 ```ts
-lastIndexOf(element: T): number;
-lastIndexOf(element: T, fromIndex: number): number;
+lastIndexOf(element: T): Promise<number>;
+lastIndexOf(element: T, fromIndex: number): Promise<number>;
 ```
 
 > Parameters
@@ -644,7 +641,7 @@ leftJoin<TKey, TRight, TResult>(
     leftKeySelector: (element: T, index: number) => TKey,
     rightKeySelector: (element: TRight, index: number) => TKey,
     joinSelector: (left: T, right?: TRight) => TResult,
-  ): IterableQuery<TResult>;
+  ): AsyncIterableQuery<TResult>;
 ```
 
 > Parameters
@@ -689,8 +686,8 @@ Returns the number of elements in a sequence.
 > Syntax
 
 ```ts
-length(): number;
-length(predicate: (element: T, index: number) => boolean): number;
+length(): Promise<number>;
+length(predicate: (element: T, index: number) => boolean): <number>;
 ```
 
 > Parameters
@@ -712,7 +709,7 @@ Returns a sequence of transformed values.
 > Syntax
 
 ```ts
-map<S>(selector: (element: T, index: number) => S): IterableQuery<S>;
+map<S>(selector: (element: T, index: number) => S): AsyncIterableQuery<S>;
 ```
 
 > Parameters
@@ -735,8 +732,8 @@ Returns the maximum element in a sequence.
 > Syntax
 
 ```ts
-max(): number;
-max(compareFn: (a: T, b: T) => number): T;
+max(): Promise<T>;
+max(compareFn: (a: T, b: T) => number): Promise<T>;
 ```
 
 > Parameters
@@ -764,8 +761,8 @@ Returns the minimum element in a sequence.
 > Syntax
 
 ```ts
-min(): number;
-min(compareFn: (a: T, b: T) => number): T;
+min(): Promise<T>;
+min(compareFn: (a: T, b: T) => number): Promise<T>;
 ```
 
 > Parameters
@@ -793,7 +790,7 @@ Returns the element at a specified index.
 > Syntax
 
 ```ts
-nth(index: number): T;
+nth(index: number): Promise<T>;
 ```
 
 > Parameters
@@ -819,7 +816,7 @@ query(['a', 'b', 'c', 'd']).nth(10) // returns undefined
 > Syntax
 
 ```ts
-prepend(other: Iterable<T>): IterableQuery<T>;
+prepend(other: AsyncIterable<T> | T): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -844,12 +841,12 @@ Applies a function against an accumulator and each element *(from left to right)
 ```ts
 reduce(
     callback: (accumulator: T, current: T, index: number) => T,
-  ): T;
+  ): Promise<any>;
 
 reduce<S>(
     callback: (accumulator: S, current: T, index: number) => S,
     initialValue: S,
-  ): S;
+  ): Promise<any>;
 ```
 
 > Parameters
@@ -877,7 +874,7 @@ Skips the specified number of elements from the beginning of sequence and return
 > Syntax
 
 ```ts
-skip(count: number): IterableQuery<T>;
+skip(count: number): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -905,7 +902,7 @@ Returns a sequence that represents the range of elements from start to end.
 > Syntax
 
 ```ts
-slice(start: number, end: number): IterableQuery<T>;
+slice(start: number, end: number): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -931,7 +928,7 @@ Tests whether at least one element passes the predicate.
 > Syntax
 
 ```ts
-some(predicate: (element: T, index: number) => boolean): boolean;
+some(predicate: (element: T, index: number) => boolean): Promise<boolean>;
 ```
 
 > Parameters
@@ -954,7 +951,7 @@ Returns the sum of all elements.
 
 ```ts
 sum(): number;
-sum(selector: (element: T, index: number) => number): number;
+sum(selector: (element: T, index: number) => number): Promise<number>;
 ```
 
 > Parameters
@@ -978,7 +975,7 @@ Returns a specified number of elements from the beginning of sequence.
 > Syntax
 
 ```ts
-take(count: number): IterableQuery<T>;
+take(count: number): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -1005,8 +1002,8 @@ Returns a set union with a given sequence.
 > Syntax
 
 ```ts
-union(other: Iterable<T>): IterableQuery<T>;
-union<S>(other: Iterable<T>, selector: (element: T) => S): IterableQuery<T>;
+union(other: AsyncIterable<T>): AsyncIterableQuery<T>;
+union<S>(other: AsyncIterable<T>, selector: (element: T) => S): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -1038,7 +1035,7 @@ Returns a sequence of values for each index in the source sequence.
 > Syntax
 
 ```ts
-values(): IterableQuery<T>;
+values(): AsyncIterableQuery<T>;
 ```
 
 > Example
