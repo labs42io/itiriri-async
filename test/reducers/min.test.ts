@@ -30,4 +30,18 @@ describe('reducers/min', () => {
       expect(await min(fromArray(source), (a, b) => a - b)).to.be.equal(-10.99);
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = min(fromArray(source), x => x);
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
 });

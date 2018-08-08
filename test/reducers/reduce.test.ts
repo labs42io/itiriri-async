@@ -62,4 +62,18 @@ describe('reducers/reduce', () => {
       expect(await reduce(fromArray(source), (a, b, idx) => a + (idx + 1) * 2, 1)).to.equal(21);
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = reduce(fromArray(source), x => x);
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
 });

@@ -30,4 +30,31 @@ describe('reducers/first', () => {
       expect(await first(fromArray(arr))).to.be.undefined;
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = first(fromArray(source));
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
+
+  describe('When calling on rejected Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = first(fromArray(source));
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
 });

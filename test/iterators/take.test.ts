@@ -68,4 +68,18 @@ describe('iterators/take', () => {
       expect(await toArray(iterator)).to.deep.equal([]);
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = take(fromArray(source), 1);
+
+      expect(toArray(q)).to.eventually.be.rejected;
+    });
+  });
 });

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "lib": [
       "es6",
-      "esnext.asynciterable"
+      "esnext"
     ],
     "importHelpers": true,
     "module": "commonjs",

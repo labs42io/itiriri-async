@@ -21,4 +21,31 @@ describe('reducers/forEach', () => {
       expect(result).to.be.deep.equal([5, 4, 4]);
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = forEach(fromArray(source), x => x);
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
+
+  describe('When calling on 2 Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = forEach(fromArray(source), x => x);
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
 });

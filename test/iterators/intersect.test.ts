@@ -63,4 +63,18 @@ describe('iterators/intersect', () => {
       expect(await toArray(iterator)).to.be.deep.equal([{ x: 2, y: 'fdasd' }]);
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = intersect(fromArray(source), [], x => x);
+
+      expect(toArray(q)).to.eventually.be.rejected;
+    });
+  });
 });

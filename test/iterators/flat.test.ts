@@ -63,4 +63,22 @@ describe('iterators/flat', () => {
       expect(result).to.deep.equal([1, 2, 3, 4, 5, 1, 42]);
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', () => {
+      // hitting all tests (coverage)
+      const source = [
+        [
+          Promise.resolve(-1).finally(),
+        ],
+        [
+          Promise.resolve(1),
+          Promise.reject(0).finally(),
+        ]
+      ];
+      const q = flat(fromArray(source));
+
+      expect(toArray(q)).to.eventually.be.rejected;
+    });
+  });
 });

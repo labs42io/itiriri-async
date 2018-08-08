@@ -87,4 +87,27 @@ describe('iterators/distinct', () => {
       expect(result).to.deep.equal([elem1, elem42, elem2]);
     });
   });
+
+  describe('When calling on some rejected Promises', () => {
+    it('Should return rejected Promise', async () => {
+      const source = [Promise.reject(1)];
+      const q = distinct(fromArray(source), x => x);
+
+      expect(toArray(q)).to.eventually.be.rejected;
+    });
+  });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1),
+      ];
+      const q = distinct(fromArray(source), x => x);
+
+      expect(toArray(q)).to.eventually.be.rejected;
+    });
+  });
 });

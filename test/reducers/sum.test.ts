@@ -29,4 +29,18 @@ describe('reducers/sum', () => {
       expect(await sum(fromArray(source))).to.be.equal(100.5);
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = sum(fromArray(source));
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
 });

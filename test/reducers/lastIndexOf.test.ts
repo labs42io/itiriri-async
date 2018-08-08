@@ -59,4 +59,18 @@ describe('reducers/lastIndexOf', () => {
       expect(await lastIndexOf(fromArray(source), (elem, idx) => idx === 2)).to.be.equal(2);
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = lastIndexOf(fromArray(source), x => x);
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
 });

@@ -22,13 +22,11 @@ import { reduce } from './reducers/reduce';
 import { sum } from './reducers/sum';
 import { AsyncIterableQuery } from './types/AsyncIterableQuery';
 import { isAsyncIterable } from './utils/isAsyncIterable';
-import { asyncIterable } from './utils/asyncIterable';
 import { asyncIterator } from './utils/asyncIterator';
 import { average } from './reducers/average';
 import { forEach } from './reducers/forEach';
 import { awaitAll } from './reducers/awaitAll';
 import { slice } from './iterators/slice';
-import { leftJoin as syncLeftJoin } from 'itiriri/iterators/leftJoin';
 
 /**
  * Creates a queryable iterable.

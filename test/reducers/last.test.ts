@@ -34,4 +34,18 @@ describe('reducers/last', () => {
       expect(await last(fromArray(source))).to.be.equal('asdf');
     });
   });
+
+  describe('When calling on some Promises', () => {
+    it('Should return rejected Promise', async () => {
+      // hitting all tests (coverage)
+      const source = [
+        Promise.resolve(1).finally(),
+        Promise.reject(1).finally(),
+        Promise.resolve(1)
+      ];
+      const q = last(fromArray(source));
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
 });
