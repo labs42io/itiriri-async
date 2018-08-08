@@ -43,7 +43,7 @@ export class Gulpfile {
     const majorVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
     if (majorVersion < 10) {
       return gulp.src('./build/compiled/test/**/*.js')
-        .pipe(mocha({ harmony_async_iteration: '' }));
+        .pipe(mocha({ harmony_async_iteration: '', harmony_promise_finally: '' }));
     }
     return gulp.src('./build/compiled/test/**/*.js').pipe(mocha());
   }
@@ -176,7 +176,7 @@ export class Gulpfile {
   coverage() {
     const majorVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
 
-    const flags = majorVersion < 10 ? '--harmony_async_iteration' : '';
+    const flags = majorVersion < 10 ? '--harmony_async_iteration --harmony-promise-finally' : '';
 
     return gulp.src('./package.json', { read: false })
       .pipe(shell([
