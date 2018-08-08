@@ -57,9 +57,9 @@ async function h() {
   console.log('ha2', a2);
 }
 
-f();
-g();
-h();
+// f();
+// g();
+// h();
 
 /**
  Output:
@@ -71,4 +71,11 @@ fa2 []
 ga1 []
 ga2 [ 1, 3, 4, 2, 2 ]
 
- */
+*/
+
+const arr = [1, 2, 3];
+const c1 = fromArray(arr);
+const c2 = fromArray(arr);
+
+console.log(c1.next().then(v => console.log(v)));
+console.log(c2.next().then(v => console.log(v)));

@@ -4,6 +4,7 @@ import { SpyIterable } from '../helpers/SpyIterable';
 import { SpyAsyncIterable } from '../helpers/SpyAsyncIterable';
 import { queryAsync } from '../../lib/QueryAsync';
 import { toArray } from '../helpers/toArray';
+import { asyncIterable } from '../../lib/utils/asyncIterable';
 
 describe('Query (query)', () => {
   describe('When calling entries', () => {
@@ -48,16 +49,12 @@ describe('Query (query)', () => {
 
     it('Should return a new query with same values', async () => {
       const source = [1, 3, 4, 2, 2];
-      const q1 = queryAsync(fromArray(source));
+      const q1 = queryAsync(asyncIterable(() => fromArray(source)));
       const q2 = q1.values();
 
-      // expect(q2).to.not.be.equal(q1);
-
-      // const [res1, res2] = await Promise.all([null, toArray(q2)]);
-      // const res2 = await toArray(q2);
-      // const res1 = await toArray(q1);
-
-      expect(await toArray(q1)).to.be.deep.equal(null);
+      expect(q2).to.not.be.equal(q1);
+      const [res1, res2] = await Promise.all([toArray(q1), toArray(q2)]);
+      expect(res2).to.be.deep.equal(res1);
     });
   });
 
