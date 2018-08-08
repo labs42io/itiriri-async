@@ -61,6 +61,5 @@ export interface AsyncIterableSet<T> extends AsyncIterable<T> {
    * @pa{(element: T)=>S} element transformation
    * @returns AsyncIterable<T>
    */
-  // union<S>(other: Iterable<T>, selector: (element: T) => S): AsyncIterableQuery<T>;
-
+  union<S>(other: AsyncIterable<T>, selector: (element: T) => S): AsyncIterableQuery<T>;
 }
