@@ -43,7 +43,7 @@ export class Gulpfile {
     const majorVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
     if (majorVersion < 10) {
       return gulp.src('./build/compiled/test/**/*.js')
-        .pipe(mocha({ 'harmony_async_iteration': '' }));
+        .pipe(mocha({ harmony_async_iteration: '' }));
     }
     return gulp.src('./build/compiled/test/**/*.js').pipe(mocha());
   }
@@ -176,9 +176,12 @@ export class Gulpfile {
   coverage() {
     const majorVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
 
-    let flags = majorVersion < 10 ? '--harmony_async_iteration' : '';
+    const flags = majorVersion < 10 ? '--harmony_async_iteration' : '';
 
     return gulp.src('./package.json', { read: false })
-      .pipe(shell([`node ${flags} node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha ./build/compiled/test ./build/compiled/lib -- --recursive`]));
+      .pipe(shell([
+        `node ${flags} node_modules/.bin/istanbul cover ` +
+        `node_modules/mocha/bin/_mocha ` +
+        `./build/compiled/test ./build/compiled/lib -- --recursive`]));
   }
 }
