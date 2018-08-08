@@ -152,17 +152,11 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
 
   // #region IterablePredicate implementation
   every(predicate: (element: T, index: number) => boolean): Promise<boolean> {
-    let ret = false;
-    indexOf(this, (e, i) => !predicate(e, i)).then(index => ret = index !== -1);
-
-    return Promise.resolve(ret);
+    return indexOf<T>(this.source, (e, i) => !predicate(e, i)).then(index => index === -1);
   }
 
   some(predicate: (element: T, index: number) => boolean): Promise<boolean> {
-    let ret = false;
-    indexOf(this, predicate).then(index => ret = index !== -1);
-
-    return Promise.resolve(ret);
+    return indexOf<T>(this, predicate).then(index => index !== -1);
   }
 
   includes(element: T, fromIndex: number = 0): Promise<boolean> {
