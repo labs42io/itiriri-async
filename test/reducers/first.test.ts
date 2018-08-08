@@ -31,7 +31,7 @@ describe('reducers/first', () => {
     });
   });
 
-  describe('When calling on some Promises', () => {
+  describe('When calling on 3 Promises', () => {
     it('Should return rejected Promise', async () => {
       // hitting all tests (coverage)
       const source = [
@@ -45,7 +45,7 @@ describe('reducers/first', () => {
     });
   });
 
-  describe('When calling on rejected Promises', () => {
+  describe('When calling on 2 Promises', () => {
     it('Should return rejected Promise', async () => {
       // hitting all tests (coverage)
       const source = [
