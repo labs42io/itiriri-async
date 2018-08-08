@@ -1,4 +1,4 @@
-export async function toIterable<TElement>(
+export async function awaitAll<TElement>(
   source: AsyncIterable<TElement>,
 ): Promise<Iterable<TElement>> {
 
@@ -7,5 +7,5 @@ export async function toIterable<TElement>(
     buffer.push(element);
   }
 
-  return buffer;
+  return <Iterable<TElement>>buffer;
 }

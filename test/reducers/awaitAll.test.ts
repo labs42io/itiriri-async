@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import { empty } from '../helpers/asyncGenerators';
-import { toIterable } from '../../lib/reducers/toIterable';
+import { awaitAll } from '../../lib/reducers/awaitAll';
 
-describe('reducers/toIterable', () => {
+describe('reducers/awaitAll', () => {
   describe('When accessing the iterator', () => {
     it('Should return an Iterator', async () => {
-      const iterator = await toIterable(empty());
+      const iterator = await awaitAll(empty());
 
       expect(iterator[Symbol.iterator]()).to.have.property('next');
     });

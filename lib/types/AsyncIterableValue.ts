@@ -12,6 +12,12 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
   nth(index: number): Promise<T>;
 
   /**
+   * Returns a promise with the iterable from the original async iterable
+   * @returns Promise<Iterable<T>>
+   */
+  awaitAll(): Promise<Iterable<T>>;
+
+  /**
    * Returns the first index at which a given element can be found.
    * If not present, returns -1.
    * @param  {T} element element to search

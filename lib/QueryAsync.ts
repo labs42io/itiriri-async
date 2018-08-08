@@ -26,7 +26,7 @@ import { asyncIterable } from './utils/asyncIterable';
 import { asyncIterator } from './utils/asyncIterator';
 import { average } from './reducers/average';
 import { forEach } from './reducers/forEach';
-import { toIterable } from './reducers/toIterable';
+import { awaitAll } from './reducers/awaitAll';
 import { slice } from './iterators/slice';
 
 /**
@@ -137,8 +137,8 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
     return sum(map(this.source, selector));
   }
 
-  toIterable(): Promise<Iterable<T>> {
-    return toIterable(this.source);
+  awaitAll(): Promise<Iterable<T>> {
+    return awaitAll(this.source);
   }
 
   reduce<TResult>(

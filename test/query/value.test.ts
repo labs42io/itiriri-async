@@ -406,4 +406,21 @@ describe('Query (value)', () => {
       ]);
     });
   });
+
+  describe.only('When calling awaitAll', () => {
+    it('Should return an Iterable', async () => {
+      const q = queryAsync(fromArray([1, 2, 3, 2, 1]));
+      const q1 = await q.awaitAll();
+      const it = q1[Symbol.iterator]();
+
+      expect(it).has.property('next');
+
+      expect(it.next()).to.has.property('value').that.is.equal(1);
+      expect(it.next()).to.has.property('value').that.is.equal(2);
+      expect(it.next()).to.has.property('value').that.is.equal(3);
+      expect(it.next()).to.has.property('value').that.is.equal(2);
+      expect(it.next()).to.has.property('value').that.is.equal(1);
+      expect(it.next()).to.has.property('done').that.is.true;
+    });
+  });
 });
