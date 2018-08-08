@@ -38,8 +38,14 @@ export class Gulpfile {
    */
   @Task()
   unit() {
-    return gulp.src('./build/compiled/test/**/*.js')
-      .pipe(mocha());
+    // back compatibility 
+    // node < v10 requires --harmony_async_iteration for async iterators
+    const majorVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
+    if (majorVersion < 10) {
+      return gulp.src('./build/compiled/test/**/*.js')
+        .pipe(mocha({ 'harmony_async_iteration': '' }));
+    }
+    return gulp.src('./build/compiled/test/**/*.js').pipe(mocha());
   }
 
   /**
