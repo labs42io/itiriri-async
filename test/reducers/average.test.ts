@@ -36,4 +36,13 @@ describe('reducers/average', () => {
       expect(await average(fromArray(source))).to.be.undefined;
     });
   });
+
+  describe('When calling on some rejected Promises', () => {
+    it('Should return rejected Promise', () => {
+      const source = [Promise.reject(1)];
+      const q = average(fromArray(source));
+
+      expect(q).to.eventually.be.rejected;
+    });
+  });
 });

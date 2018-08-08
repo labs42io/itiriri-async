@@ -68,6 +68,7 @@
     "sinon": "4.3.0",
     "sinon-chai": "2.14.0",
     "ts-node": "5.0.0",
+    "tslib": "^1.9.3",
     "tslint": "5.9.1",
     "tslint-config-airbnb": "5.7.0",
     "typescript": "2.7.2",
