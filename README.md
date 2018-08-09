@@ -838,22 +838,16 @@ the `joinSelector` function is called with an `undefined` right value.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3])
-  .leftJoin([2, 3, 4, 2], n => n, n => n, (a, b) => `${a}-${b || '#'}`)
-  .toArray();
-// returns ['1-#', '2-2', '2-2', '3-3']
+async function* generator() {
+  yield* [1, 2, 3];
+}
 
-queryAsync([{book: 'History', owner: 3}, {book: 'Math', owner: 2}, {book: 'Art'}]])
-  .leftJoin(
-    [{id: 1, name: 'Alice'}, {id: 2, name: 'Bob'}, {id: 3, name: 'Eve'}],
-    left => left.owner,
-    right => right.id,
-    (left, right) => ({book: left.book, owner: right && right.owner || '--'}))
-  .toArray();
-// returns [
-//   {book: 'History', owner: 'Eve'},
-//   {book: 'Math', owner: 'Bob'},
-//   {book: 'Art', owner: '--'}]
+(async function () {
+  const q = await queryAsync(generator())
+    .leftJoin([2, 3, 4, 2], n => n, n => n, (a, b) => `${a}-${b || '#'}`)
+    .awaitAll();
+  q.toArray(); // returns ['1-#', '2-2', '2-2', '3-3']
+})();
 ```
 
 `leftJoin` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -877,8 +871,13 @@ length(predicate: (element: T, index: number) => boolean): <number>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3, 4, 5]).length();  // returns 5
-queryAsync([1, 2, 3, 4, 5]).length(elem => elem > 2);  // returns 3
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+(async function () {
+  await queryAsync(generator()).length(); // return: 3
+})();
 ```
 
 ### `map`
@@ -928,9 +927,14 @@ If sequence is empty, returns `undefined`.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]).max(); // returns 3
-queryAsync([]).max(); // returns undefined
-queryAsync([7, 3, 11, 5]).max((a, b) => (1 / a) - (1 / b)); // returns 3
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).map(x => x * 10).awaitAll();
+  q.toArray(); // returns [10, 20, 30]
+})();
 ```
 
 ### `min`
@@ -957,9 +961,19 @@ If sequence is empty, returns `undefined`.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]).min(); // returns 1
-queryAsync([]).min(); // returns undefined
-queryAsync([7, 3, 11, 5]).min((a, b) => (1 / a) - (1 / b)); // returns 11
+async function* generator1() {
+  yield* [1, -2, 3];
+}
+
+async function* generator2() {
+  yield* [];
+}
+
+
+(async function () {
+  await queryAsync(generator1()).min(); // returns -1
+  await queryAsync(generator2()).min(); // returns undefined
+})();
 ```
 
 ### `nth`
@@ -975,7 +989,6 @@ nth(index: number): Promise<T>;
 > Parameters
 * `index` - *(required)* zero based index at which to get the element
 
-For a negative index returns the element from the end of the sequence.  
 If index is out of the range, returns `undefined` .
 
 > Example
@@ -1060,7 +1073,6 @@ skip(count: number): AsyncIterableQuery<T>;
 * `count` - *(required)* number of elements to skip
 
 When *count* is greater than actual number of elements, results in an empty sequence.  
-Accepts also a negative count, in which case skips the elements from the end of the sequence.
 
 > Example
 
@@ -1159,8 +1171,6 @@ take(count: number): AsyncIterableQuery<T>;
 
 > Parameters
 * `count` - *(required)* number of elements to take
-
-If a negative count is specified, returns elements from the end of the sequence.
 
 > Example
 
