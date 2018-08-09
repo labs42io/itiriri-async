@@ -1075,8 +1075,14 @@ Calling `reduce` on an empty sequence without an initial value throws an error.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([ 1, 2, 42, 0 ]).reduce((acc, elem) => Math.max(acc, elem)); // returns 42
-queryAsync([ 1, 2, 3 ]).reduce((acc, elem) => acc + elem, 10); // returns 16
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+(async function () {
+  // 5 + 10 + 20 + 30
+  await queryAsync(generator()).reduce((accum, elem) => accum + elem * 10, 5); // returns: 65
+})();
 ```
 
 ### `skip`
@@ -1099,9 +1105,19 @@ When *count* is greater than actual number of elements, results in an empty sequ
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3, 4, 5]).skip(2).toArray(); // [3, 4, 5]
-queryAsync([1, 2, 3, 4, 5]).skip(10).toArray(); // []
-queryAsync([1, 2, 3, 4, 5]).skip(-2).toArray(); // [1, 2, 3]
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).skip(1).awaitAll();
+  q.toArray(); // returns: [2, 3]
+})();
+
+(async function () {
+  const q = await queryAsync(generator()).skip(10).awaitAll();
+  q.toArray(); // returns: []
+})();
 ```
 
 `skip` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -1127,7 +1143,14 @@ The `end` index is not included in the result.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3, 4, 5]).slice(1, 3).toArray(); // returns [2, 3]
+async function* generator() {
+  yield* [1, 2, 3, 3, 4];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).slice(2, 4).awaitAll();
+  q.toArray(); // returns: [3, 3]
+})();
 ```
 
 `slice` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -1150,8 +1173,14 @@ some(predicate: (element: T, index: number) => boolean): Promise<boolean>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3, 42, 5]).some(elem => elem > 40); // returns true
-queryAsync([1, 2, 3, 42, 5]).some(elem => elem < 0); // returns false
+async function* generator() {
+  yield* [1, 2, 3, -3, 4, 0];
+}
+
+(async function () {
+  await queryAsync(generator()).some(x => x < 0); // returns: true
+  await queryAsync(generator()).some(x => x > 5); // returns: false
+})();
 ```
 
 ### `sum`
@@ -1175,8 +1204,18 @@ Optionally, a function can be provided to apply a transformation and map each el
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]).sum(); // returns 6
-queryAsync([{value: 1}, {value: 2}]).sum(elem => elem.value); // returns 3
+async function* generator1() {
+  yield* [1, 2, 3];
+}
+
+async function* generator2() {
+  yield* [{val: 3}, {val: 5}];
+}
+
+(async function () {
+  await queryAsync(generator1()).sum(); // returns: 6
+  await queryAsync(generator2()).sum(x => x.val); // returns: 8
+})();
 ```
 
 ### `take`
@@ -1197,9 +1236,19 @@ take(count: number): AsyncIterableQuery<T>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]).take(2); // returns [1, 2]
-queryAsync([1, 2, 3]).take(-2); // returns [2, 3]
-queryAsync([1, 2, 3]).take(10); // returns [1, 2, 3]
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).take(2).awaitAll();
+  q.toArray(); // returns: [1, 2]
+})();
+
+(async function () {
+  const q = await queryAsync(generator()).take(0).awaitAll();
+  q.toArray(); // returns: []
+})();
 ```
 
 `take` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -1224,15 +1273,18 @@ Example
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]]).union([2, 3, 4]).toArray(); // returns [1, 2, 3, 4]
+async function* generator1() {
+  yield* [1, 2, 3];
+}
 
-queryAsync([{id: 1, name: 'Alice'}, {id: 2, name: 'Bob'})
-  .union([{id: 3, name: 'David'}, {id: 1, name: 'Alice'}], elem => elem.id)
-  .toArray();
-// returns [
-//  {id: 1, name: 'Alice'},
-//  {id: 2, name: 'Bob'},
-//  {id: 3, name: 'David'}]
+async function* generator2() {
+  yield* [4, 5];
+}
+
+(async function () {
+  const q = await queryAsync(generator1()).union(generator2()).awaitAll();
+  q.toArray(); // returns: [1, 2, 3, 4, 5]
+})();
 ```
 
 `union` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -1252,12 +1304,17 @@ values(): AsyncIterableQuery<T>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]]).values().toArray(); // returns [1, 2, 3]
+async function* generator() {
+  yield* [1, 0, 2, 3];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).values().awaitAll();
+  q.toArray(); // [1, 0, 2, 3]
+})();
 ```
 
 `values` *is a deferred method and is executed only when the result sequence is iterated.*
-
-
 
 ## License
 
