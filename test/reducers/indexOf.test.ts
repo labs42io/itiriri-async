@@ -65,11 +65,12 @@ describe('reducers/indexOf', () => {
       // hitting all tests (coverage)
       const source = [
         Promise.resolve(1).finally(),
-        Promise.reject(1).finally(),
+        Promise.reject(10).finally(),
         Promise.resolve(1),
       ];
-      const q = indexOf(fromArray(source), x => x);
+      const q = indexOf(fromArray(source), () => false);
 
+      q.catch(val => expect(val).to.be.equal(10));
       expect(q).to.eventually.be.rejected;
     });
   });
@@ -84,6 +85,7 @@ describe('reducers/indexOf', () => {
       const q = indexOf(fromArray(source), x => x);
 
       expect(q).to.eventually.be.rejected;
+      q.catch(val => expect(val).to.be.equal(1));
     });
   });
 });

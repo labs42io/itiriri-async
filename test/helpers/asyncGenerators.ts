@@ -10,6 +10,6 @@ export async function* numbers(offset = 0, step = 1) {
 
 export async function* fromArray(arr) {
   for (const e of arr) {
-    yield await Promise.resolve(e);
+    yield await e;
   }
 }

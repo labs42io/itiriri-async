@@ -5,7 +5,7 @@ import { fromArray } from '../helpers/asyncGenerators';
 const chai = require('chai');
 chai.use(require('chai-as-promised'));
 
-describe('reducers/at', () => {
+describe('reducers/nth', () => {
   describe('When accessing an element that exists', () => {
     it('Should return the element from first position', async () => {
       const source = [1, 2, 3, 4, 5];
@@ -46,8 +46,9 @@ describe('reducers/at', () => {
         Promise.reject(1).finally(),
         Promise.resolve(1),
       ];
-      const q = nth(fromArray(source), 0);
+      const q = nth(fromArray(source), 2);
 
+      q.catch(val => expect(val).to.be.equal(1));
       expect(q).to.eventually.be.rejected;
     });
   });
@@ -62,6 +63,7 @@ describe('reducers/at', () => {
       const q = nth(fromArray(source), 1);
 
       expect(q).to.eventually.be.rejected;
+      q.catch(val => expect(val).to.be.equal(1));
     });
   });
 });

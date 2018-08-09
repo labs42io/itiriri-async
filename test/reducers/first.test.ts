@@ -35,13 +35,14 @@ describe('reducers/first', () => {
     it('Should return rejected Promise', async () => {
       // hitting all tests (coverage)
       const source = [
-        Promise.resolve(1).finally(),
         Promise.reject(1).finally(),
+        Promise.resolve(1).finally(),
         Promise.resolve(1),
       ];
       const q = first(fromArray(source));
 
       expect(q).to.eventually.be.rejected;
+      q.catch(val => expect(val).to.be.equal(1));
     });
   });
 
@@ -55,6 +56,7 @@ describe('reducers/first', () => {
       const q = first(fromArray(source));
 
       expect(q).to.eventually.be.rejected;
+      q.catch(val => expect(val).to.be.equal(1));
     });
   });
 });
