@@ -19,8 +19,15 @@ export interface AsyncIterablePredicate<T> extends AsyncIterable<T> {
   /**
    * Determines whether the sequence includes a certain element.
    * @param element element to search
-   * @param fromIndex the start index
    * @returns Promise<boolean>
    */
+  includes(element: T): Promise<boolean>;
+
+  /**
+ * Determines whether the sequence includes a certain element.
+ * @param element element to search
+ * @param fromIndex the start index
+ * @returns Promise<boolean>
+ */
   includes(element: T, fromIndex?: number): Promise<boolean>;
 }

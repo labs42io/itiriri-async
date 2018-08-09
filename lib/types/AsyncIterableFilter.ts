@@ -30,9 +30,22 @@ export interface AsyncIterableFilter<T> extends AsyncIterable<T> {
 
   /**
    * Returns a sequence that represents the range of elements from start to end.
-   * @param start zero-based index at which to start extraction
-   * @param end zero-based index before which to end extraction (not including)
    * @returns AsyncIterable<T>
    */
-  slice(start?: number, end?: number): AsyncIterableQuery<T>;
+  slice(): AsyncIterableQuery<T>;
+
+  /**
+ * Returns a sequence that represents the range of elements from start to end.
+ * @param start zero-based index at which to start extraction
+ * @returns AsyncIterable<T>
+ */
+  slice(start: number): AsyncIterableQuery<T>;
+
+  /**
+ * Returns a sequence that represents the range of elements from start to end.
+ * @param start zero-based index at which to start extraction
+ * @param end zero-based index before which to end extraction (not including)
+ * @returns AsyncIterable<T>
+ */
+  slice(start: number, end: number): AsyncIterableQuery<T>;
 }
