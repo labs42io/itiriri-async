@@ -1,3 +1,5 @@
+import { IterableQuery } from 'itiriri';
+
 /**
  * Calculate a scalar value over an iterable.
  */
@@ -13,9 +15,9 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
 
   /**
    * Returns a promise with the iterable from the original async iterable
-   * @returns Promise<Iterable<T>>
+   * @returns Promise<IterableQuery<T>>
    */
-  awaitAll(): Promise<Iterable<T>>;
+  awaitAll(): Promise<IterableQuery<T>>;
 
   /**
    * Returns the first index at which a given element can be found.

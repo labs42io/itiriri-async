@@ -27,6 +27,7 @@ import { average } from './reducers/average';
 import { forEach } from './reducers/forEach';
 import { awaitAll } from './reducers/awaitAll';
 import { slice } from './iterators/slice';
+import { IterableQuery } from 'itiriri';
 
 /**
  * Creates a queryable iterable.
@@ -136,7 +137,7 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
     return sum(map(this.source, selector));
   }
 
-  awaitAll(): Promise<Iterable<T>> {
+  awaitAll(): Promise<IterableQuery<T>> {
     return awaitAll(this.source);
   }
 
