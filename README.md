@@ -258,10 +258,23 @@ exclude<S>(others: Iterable<T>, selector: (element: T) => S): AsyncIterableQuery
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([2, 0, 1, 8, 2]).exclude([0, 1]).toArray(); // returns [2, 8, 2]
-queryAsync([{id: 1}, {id: 2}])
-  .exclude([{id: 2}, elem => elem.id])
-  .toArray(); // returns [{id: 1}]
+async function* generator1() {
+  yield* [2, 0, 1, 8, 2];
+}
+
+async function* generator2() {
+  yield* [{ id: 1 }, { id: 2 }];
+}
+
+(async function () {
+  const q = await queryAsync(generator1()).exclude([0, 1]).awaitAll();
+  q.toArray(); // returns [2, 8, 2]
+})();
+
+(async function () {
+  const q = await queryAsync(generator2()).exclude([{ id: 2 }], x => x.id).awaitAll();
+  q.toArray(); // returns [{id: 1}]
+})();
 ```
 
 `exclude` *is a deferred method and is executed only when the result sequence is iterated.*
