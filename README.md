@@ -297,8 +297,19 @@ filter(predicate: (element: T, index: number) => boolean): AsyncIterableQuery<T>
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3, 4, 5]).filter(elem => elem < 3).toArray(); // returns [1, 2]
-queryAsync([1, 2, 3]).filter(elem > 10).toArray(); // returns []
+async function* generator() {
+  yield* [1, 2, 3, 4, 5];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).filter(elem => elem < 3).awaitAll();
+  q.toArray(); // returns [1, 2]
+})();
+
+(async function () {
+  const q = await queryAsync(generator()).filter(elem => elem > 10).awaitAll();
+  q.toArray(); // returns []
+})();
 ```
 
 `filter` *is a deferred method and is executed only when the result sequence is iterated.*
