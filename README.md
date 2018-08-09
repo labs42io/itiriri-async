@@ -367,8 +367,17 @@ If no element satisfies the predicate, returns `-1`.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([7, 12, 15]).findIndex(elem => elem > 10 && elem < 15); // returns 1
-queryAsync([1, 2, 3]).findIndex(elem > 10); // returns -1
+async function* generator() {
+  yield* [1, 2, 3, 4, 5];
+}
+
+(async function () {
+  await queryAsync(generator()).find(elem => elem > 2); // returns 2
+})();
+
+(async function () {
+  await queryAsync(generator()).find(elem => elem > 10); // returns -1
+})();
 ```
 
 ### `findLast`
@@ -391,8 +400,17 @@ If no element satisfies the predicate, returns `undefined`.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([11, 7, 21]).findLast(elem => elem > 10); // returns 21
-queryAsync([1, 2, 3]).findLast(elem > 10); // returns undefined
+async function* generator() {
+  yield* [1, 2, 3, 4, 5];
+}
+
+(async function () {
+  await queryAsync(generator()).findLast(elem => elem > 2); // returns 5
+})();
+
+(async function () {
+  await queryAsync(generator()).findLast(elem => elem > 10); // returns undefined
+})();
 ```
 
 ### `findLastIndex`
@@ -415,8 +433,17 @@ If not present, returns -1.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([11, 7, 21]).findLastIndex(elem => elem > 10); // returns 2
-queryAsync([1, 2, 3]).findLastIndex(elem > 10); // returns -1
+async function* generator() {
+  yield* [1, 2, 3, 4, 5];
+}
+
+(async function () {
+  await queryAsync(generator()).findLastIndex(elem => elem > 2); // returns 4
+})();
+
+(async function () {
+  await queryAsync(generator()).findLastIndex(elem => elem > 10); // returns -1
+})();
 ```
 
 ### `first`
