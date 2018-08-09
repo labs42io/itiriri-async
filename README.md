@@ -334,8 +334,17 @@ If no element satisfies the predicate, returns `undefined`.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3, 4, 5]).find(elem => elem % 2 === 0); // returns 2
-queryAsync([1, 2, 3]).find(elem > 10); // returns undefined
+async function* generator() {
+  yield* [1, 2, 3, 4, 5];
+}
+
+(async function () {
+  await queryAsync(generator()).find(elem => elem > 2); // returns 3
+})();
+
+(async function () {
+  await queryAsync(generator()).find(elem => elem > 10); // returns undefined
+})();
 ```
 
 ### `findIndex`
