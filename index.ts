@@ -10,3 +10,17 @@ async function f() {
 }
 
 f();
+
+async function* generator() {
+  yield* [[1, 2, 3], [4, 5]];
+}
+
+// (async function () {
+//   const q = await queryAsync(generator()).findLastIndex(elem => elem > 2);
+//   console.log(q); // returns 5
+// })();
+
+(async function () {
+  const q = await queryAsync(generator()).flat().awaitAll();
+  console.log(q.toArray()); // returns undefined
+})();

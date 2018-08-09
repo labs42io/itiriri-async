@@ -487,16 +487,25 @@ Returns a sequence with all sub-sequences concatenated.
 > Syntax
 
 ```ts
-flat<T>(): AsyncIterable<T>;
+flat<T>(selector?: (element: T, index: number) => AsyncIterable<S>): AsyncIterable<T>;
 ```
+
+> Parameters
+* `selector` - *(optional)* a value transformer function to be used for comparisons
 
 > Example
 
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([{value: [1, 2], {values: [7, 9]}]).flat(elem => elem.value).toArray();
-// returns [1, 2, 7, 9]
+async function* generator() {
+  yield* [[1, 2, 3], [4, 5]];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).flat().awaitAll();
+  q.toArray(); // returns [1, 2, 3, 4, 5]
+})();
 ```
 
 `flat` *is a deferred method and is executed only when the result sequence is iterated.*
