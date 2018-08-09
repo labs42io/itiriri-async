@@ -996,9 +996,14 @@ If index is out of the range, returns `undefined` .
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync(['a', 'b', 'c', 'd']).nth(2)  // returns 'c'
-queryAsync(['a', 'b', 'c', 'd']).nth(-1) // returns 'd'
-queryAsync(['a', 'b', 'c', 'd']).nth(10) // returns undefined
+async function* generator() {
+  yield* [1, -2, 3];
+}
+
+(async function () {
+  await queryAsync(generator()).nth(2); // returns: 3
+  await queryAsync(generator()).nth(3); // returns: undefined
+})();
 ```
 
 ### `prepend`
@@ -1008,7 +1013,10 @@ queryAsync(['a', 'b', 'c', 'd']).nth(10) // returns undefined
 > Syntax
 
 ```ts
-prepend(other: AsyncIterable<T> | T): AsyncIterableQuery<T>;
+prepend(other: T): AsyncIterableQuery<T>;
+prepend(other: Promise<T>): AsyncIterableQuery<T>;
+prepend(other: Iterable<T>): AsyncIterableQuery<T>;
+prepend(other: AsyncIterable<T>): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -1019,7 +1027,19 @@ prepend(other: AsyncIterable<T> | T): AsyncIterableQuery<T>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]).prepend([9, 10]).toArray(); // returns [1, 2, 3, 9, 10]
+async function* generator() {
+  yield* [1, -2, 3];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).prepend(4).awaitAll();
+  q.toArray(); // returns: [4, 1, -2, 3]
+})();
+
+(async function () {
+  const q = await queryAsync(generator()).prepend([0, 4]).awaitAll();
+  q.toArray(); // returns: [0, 4, 1, -2, 3]
+})();
 ```
 
 `prepend` *is a deferred method and is executed only when the result sequence is iterated.*
