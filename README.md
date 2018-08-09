@@ -712,19 +712,14 @@ The `join` method works as an sql inner join.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3])
-  .join([2, 3, 4], n => n, n => n, (a, b) => `${a}-${b}`)
-  .toArray();
-// returns ['2-2', '3-3']
+async function* generator() {
+  yield* [1, 2, 3];
+}
 
-queryAsync([{countryId: 1, code: '+1'}, {countryId: 2, code: '+44'}]])
-  .join(
-    [{ id: 1, country: 'US' }, {id: 3, country: 'MD'}],
-    left => left.countryId,
-    right => right.id,
-    (left, right) => ({country: right.country, code: left.code}))
-  .toArray();
-// returns [{country: 'US', code: '+1'}]
+(async function () {
+  const q = await queryAsync(generator()).join([1, 1, 2], x => x, x => x, (x, y) => ({ x, y })).awaitAll();
+  q.toArray(); // returns: [ { x: 1, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 2 } ]
+})();
 ```
 
 `join` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -744,7 +739,14 @@ keys(): AsyncIterableQuery<number>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync(['a', 'b', 'c']).keys().toArray(); // returns [0, 1, 2]
+async function* generator() {
+  yield* ['a', 'b', 'c'];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).keys().awaitAll();
+  q.toArray(); // returns: [0, 1, 2]
+})();
 ```
 
 `keys` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -766,8 +768,13 @@ For an empty sequence returns `undefined`.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync(['a', 'b', 'c']).last(); // returns 'c'
-queryAsync([]).last(); // returns undefined
+async function* generator() {
+  yield* [1, 2, 3, -2];
+}
+
+(async function () {
+  await queryAsync(generator()).last(); // returns: -2
+})();
 ```
 
 ### `lastIndexOf`
@@ -792,9 +799,13 @@ When an element is not found, returns -1.
 
 ```ts
 import { queryAsync } from 'itiriri-async';
+async function* generator() {
+  yield* [1, 2, 3, 2, 1];
+}
 
-queryAsync(['a', 'c', 'c']).lastIndexOf('c'); // returns 2
-queryAsync(['a', 'b', 'c']).lastIndexOf('x'); // returns -1
+(async function () {
+  await queryAsync(generator()).lastIndexOf(2); // returns: 3
+})();
 ```
 
 ### `leftJoin`
