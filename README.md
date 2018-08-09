@@ -110,6 +110,9 @@ Concatenates the sequence with another one.
 > Syntax
 
 ```ts
+concat(other: T): AsyncIterableQuery<T>;
+concat(other: Promise<T>): AsyncIterableQuery<T>;
+concat(other: Iterable<T>): AsyncIterableQuery<T>;
 concat(other: AsyncIterable<T>): AsyncIterableQuery<T>;
 ```
 
@@ -121,7 +124,28 @@ concat(other: AsyncIterable<T>): AsyncIterableQuery<T>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]).concat([4, 5]).toArray()  // returns [1, 2, 3, 4, 5]
+async function* generator1() {
+  yield* [1, 2, 3];
+}
+
+async function* generator2() {
+  yield* [4, 5];
+}
+
+(async function() {
+  const q = await queryAsync(generator1()).concat(generator2()).awaitAll();
+  q.toArray();   // returns [1, 2, 3, 4, 5]
+})()
+
+(async function() {
+  const q = await queryAsync(generator1()).concat([2, 1]).awaitAll();
+  q.toArray();   // returns [1, 2, 3, 2, 1]
+})()
+
+(async function() {
+  const q = await queryAsync(generator1()).concat(-1).awaitAll();
+  q.toArray();   // returns [1, 2, 3, -1]
+})()
 ```
 
 `concat` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -145,10 +169,14 @@ distinct<S>(selector: (element: T) => S): AsyncIterableQuery<T>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 42, 3, 4, 1]).distinct().toArray();  // returns [1, 42, 3, 4]
-queryAsync([{value: 1}, {value: 2}, {value: 1}])
-  .distinct(elem => elem.value)
-  .toArray(); // returns [{value: 1}, {value: 2}]
+async function* generator() {
+  yield* [1, 2, 3, 3, 3, 4, 2];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).distinct().awaitAll();
+  q.toArray();   // returns [1, 2, 3, 4]
+})();
 ```
 
 `distinct` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -168,8 +196,14 @@ entries(): AsyncIterableQuery<[number, T]>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync(['Alice', 'Bob', 'David']).entries().toArray();
-// returns [[0, 'Alice'], [1, 'Bob'], [2, 'David']]
+async function* generator() {
+  yield* ['Bob', 'Alice'];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).entries().awaitAll();
+  q.toArray();   // returns [[0, 'Bob'], [1, 'Alice']]
+})();
 ```
 
 `entries` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -181,7 +215,7 @@ Tests whether all the elements pass the predicate.
 > Syntax
 
 ```ts
-every(predicate: (element: T, index: number) => boolean): boolean;
+every(predicate: (element: T, index: number) => boolean): Promise<boolean>;
 ```
 
 > Parameters
@@ -191,9 +225,17 @@ every(predicate: (element: T, index: number) => boolean): boolean;
 
 ```ts
 import { queryAsync } from 'itiriri-async';
+async function* generator() {
+  yield* [1, 4, 3, 0];
+}
 
-queryAsync([2, 4, 9]).every(elem => elem > 0); // returns true
-queryAsync([7, 23, 3]).every(elem => elem % 3 === 0); // returns false
+(async function () {
+  await queryAsync(generator()).every(x => x >= 0); // true
+})();
+
+(async function () {
+  await queryAsync(generator()).every(x => x > 0); // false
+})();
 ```
 
 ### `exclude`
