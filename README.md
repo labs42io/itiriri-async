@@ -487,7 +487,7 @@ Returns a sequence with all sub-sequences concatenated.
 > Syntax
 
 ```ts
-flat<T>(selector?: (element: T, index: number) => AsyncIterable<S>): AsyncIterable<T>;
+flat<T>(selector?: (element: T, index: number) => AsyncIterable<S>): AsyncIterableQuery<T>;
 ```
 
 > Parameters
@@ -528,7 +528,13 @@ forEach(action: (element: T, index: number) => void): Promise<void>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]).forEach(elem => console.log(elem));
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+(async function () {
+  queryAsync(generator()).forEach(elem => console.log(elem));
+})();
 // 1
 // 2
 // 3
