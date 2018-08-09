@@ -28,6 +28,7 @@ import { forEach } from './reducers/forEach';
 import { awaitAll } from './reducers/awaitAll';
 import { slice } from './iterators/slice';
 import { IterableQuery } from 'itiriri';
+import { isIterable } from 'itiriri/utils/isIterable';
 
 /**
  * Creates a queryable iterable.
@@ -64,18 +65,30 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
     return forEach(this.source, action);
   }
 
-  concat(other: T | Promise<T> | AsyncIterable<T>): AsyncIterableQuery<T> {
+  concat(other: T | Promise<T> | Iterable<T> | AsyncIterable<T>): AsyncIterableQuery<T> {
+    if (isIterable(other)) {
+      return new QueryAsync(concat(
+        this.source,
+        (async function* (e) { yield* e; })(other),
+      ));
+    }
     return isAsyncIterable(other) ?
       new QueryAsync(concat(this.source, other)) :
       new QueryAsync(concat(this.source, (async function* (e) { yield e; })(other)));
   }
 
-  prepend(other: T | Promise<T> | AsyncIterable<T>): AsyncIterableQuery<T> {
+  prepend(other: T | Promise<T> | Iterable<T> | AsyncIterable<T>): AsyncIterableQuery<T> {
+    if (isIterable(other)) {
+      return new QueryAsync(concat(
+        (async function* (e) { yield* e; })(other),
+        this.source,
+      ));
+    }
     return isAsyncIterable(other) ?
       new QueryAsync(concat(other, this.source)) :
       new QueryAsync(concat(
         (async function* (e) { yield await e; })(other),
-        this,
+        this.source,
       ));
   }
   // #endregion

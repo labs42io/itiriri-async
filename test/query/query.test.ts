@@ -83,6 +83,13 @@ describe('Query (query)', () => {
 
       expect(await toArray(q)).to.be.deep.equal([0, 5]);
     });
+
+    it('Should return 4 elements', async () => {
+      const source = numberGenerator(0, 10);
+      const q = queryAsync(source).take(3).concat([1]);
+
+      expect(await toArray(q)).to.be.deep.equal([0, 10, 20, 1]);
+    });
   });
 
   describe('When calling prepend', () => {
@@ -109,6 +116,13 @@ describe('Query (query)', () => {
       const q = queryAsync(fromArray(source)).prepend(2);
 
       expect(await toArray(q)).to.be.deep.equal([2, 1]);
+    });
+
+    it('Should return 4 elements', async () => {
+      const source = numberGenerator(0, 10);
+      const q = queryAsync(source).take(3).prepend([1]);
+
+      expect(await toArray(q)).to.be.deep.equal([1, 0, 10, 20]);
     });
   });
 });

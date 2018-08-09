@@ -34,10 +34,10 @@ export interface AsyncIterableQuery<T> extends
 
   /**
    * Concatenates the sequence with another one.
-   * @param  {T | Promise<T> | Iterable<T>} other
+   * @param  {T | Promise<T> | Iterable<T> | Iterable<T>} other
    * @returns AsyncIterable<T>
    */
-  concat(other: T | Promise<T> | AsyncIterable<T>): AsyncIterableQuery<T>;
+  concat(other: T | Promise<T> | Iterable<T> | AsyncIterable<T>): AsyncIterableQuery<T>;
 
   /**
    * Returns a sequence with given elements at the beggining.
@@ -45,5 +45,5 @@ export interface AsyncIterableQuery<T> extends
    * @returns AsyncIterable<T>
    * @todo review name
    */
-  prepend(other: T | Promise<T> | AsyncIterable<T>): AsyncIterableQuery<T>;
+  prepend(other: T | Promise<T> | Iterable<T> | AsyncIterable<T>): AsyncIterableQuery<T>;
 }
