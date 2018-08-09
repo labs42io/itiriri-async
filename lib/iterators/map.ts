@@ -8,7 +8,7 @@ export function map<TElement, TResult>(
     let index = 0;
 
     for await (const element of source) {
-      yield await Promise.resolve(transform(element, index++));
+      yield await transform(element, index++);
     }
   });
 }

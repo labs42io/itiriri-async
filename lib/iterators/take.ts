@@ -14,7 +14,7 @@ export function take<TElement>(
     for await (const element of source) {
       if (n-- === 0) return;
 
-      yield await Promise.resolve(element);
+      yield await element;
     }
   });
 }

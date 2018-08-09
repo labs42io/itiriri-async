@@ -3,5 +3,5 @@ export async function first<TElement>(source: AsyncIterable<TElement>): Promise<
     return Promise.resolve(element);
   }
 
-  return Promise.resolve(undefined);
+  return undefined;
 }

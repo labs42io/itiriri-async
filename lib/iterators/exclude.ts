@@ -14,7 +14,7 @@ export function exclude<TElement, TKey>(
       const key = keySelector(element);
 
       if (!exclusionSet.has(key)) {
-        yield await Promise.resolve(element);
+        yield await element;
       }
     }
   });

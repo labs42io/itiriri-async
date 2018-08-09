@@ -17,10 +17,10 @@ export function leftJoin<TLeft, TRight, TKey, TResult>(
 
       if (rightMap.has(leftKey)) {
         for (const rightMatch of rightMap.get(leftKey)) {
-          yield await Promise.resolve(joinSelector(element, rightMatch));
+          yield await joinSelector(element, rightMatch);
         }
       } else {
-        yield await Promise.resolve(joinSelector(element));
+        yield await joinSelector(element);
       }
 
     }

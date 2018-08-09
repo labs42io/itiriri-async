@@ -17,7 +17,7 @@ export function join<TLeft, TRight, TKey, TResult>(
 
       if (rightMap.has(leftKey)) {
         for (const rightMatch of rightMap.get(leftKey)) {
-          yield await Promise.resolve(joinSelector(element, rightMatch));
+          yield await joinSelector(element, rightMatch);
         }
       }
 

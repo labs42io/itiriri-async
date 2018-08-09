@@ -12,7 +12,7 @@ export function distinct<TElement, TKey>(
 
       if (!set.has(key)) {
         set.add(key);
-        yield await Promise.resolve(element);
+        yield await element;
       }
     }
   });

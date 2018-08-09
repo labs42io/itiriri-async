@@ -9,7 +9,7 @@ export function filter<TElement>(
 
     for await (const element of source) {
       if (predicate(element, index++)) {
-        yield await Promise.resolve(element);
+        yield await element;
       }
     }
   });

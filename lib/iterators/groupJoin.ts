@@ -16,7 +16,7 @@ export function groupJoin<TLeft, TRight, TKey, TResult>(
       const leftKey = leftKeySelector(element, index++);
       const rightValues = rightMap.get(leftKey) || [];
 
-      yield await Promise.resolve(joinSelector(element, rightValues));
+      yield await joinSelector(element, rightValues);
     }
   });
 }

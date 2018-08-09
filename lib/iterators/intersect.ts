@@ -16,7 +16,7 @@ export function intersect<TElement, TKey>(
 
       if (!includedSet.has(key) && othersSet.has(key)) {
         includedSet.add(key);
-        yield await Promise.resolve(element);
+        yield await element;
       }
     }
   });
