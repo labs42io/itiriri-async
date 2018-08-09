@@ -463,8 +463,21 @@ For an empty sequence returns `undefined`.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync(['a', 'b', 'c']).first(); // returns 'a'
-queryAsync([]).first(); // returns undefined
+async function* generator1() {
+  yield* [1, 2, 3, 4, 5];
+}
+
+async function* generator2() {
+  yield* [];
+}
+
+(async function () {
+  await queryAsync(generator1()).first(); // returns 1
+})();
+
+(async function () {
+  await queryAsync(generator2()).first(); // returns undefined
+})();
 ```
 
 ### `flat`
