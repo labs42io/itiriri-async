@@ -4,8 +4,7 @@ import { queryAsync } from '../lib';
 async function* generator() {
   let id = 1;
   while (true) {
-    var url = 'https://jsonplaceholder.typicode.com/todos/' + id++;
-    yield WebRequest.json<any>(url);
+    yield WebRequest.json<any>('https://jsonplaceholder.typicode.com/todos/' + id++);
   }
 }
 
