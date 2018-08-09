@@ -5,6 +5,31 @@
 
 A library for asynchronous iteration.
 
+```ts
+async function* generator() {
+  let id = 1;
+  while (true) {
+    yield WebRequest.json<any>('https://jsonplaceholder.typicode.com/todos/' + id++);
+  }
+}
+
+async function first2Uncompleted() {
+  const q = await queryAsync(generator())
+    .filter(x => x.completed === false)
+    .map(x => x.title)
+    .take(2)
+    .awaitAll();
+  console.log(q.toArray());
+}
+
+first2Uncompleted();
+// [ 'delectus aut autem', 'quis ut nam facilis et officia qui' ]
+```
+
+Check examples folder for more
+
+---
+
 ## Complete list of methods
 
 * [average](#average)
@@ -52,7 +77,7 @@ Returns the average value.
 > Syntax
 
 ```ts
-average(): number;
+average(): Promise<number>;
 average(selector: (element: T, index: number) => number): Promise<number>;
 ```
 
@@ -64,11 +89,11 @@ For a sequence with no elements returns `undefined`.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([41, 42, 43]).average()  // returns 42
-query([{value: 1}, {value: 2}]).average(elem => elem.value) // returns 1.5
-query([]).average() // returns undefined
+queryAsync([41, 42, 43]).average()  // returns 42
+queryAsync([{value: 1}, {value: 2}]).average(elem => elem.value) // returns 1.5
+queryAsync([]).average() // returns undefined
 ```
 
 ### `concat`
@@ -87,9 +112,9 @@ concat(other: AsyncIterable<T>): AsyncIterableQuery<T>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]).concat([4, 5]).toArray()  // returns [1, 2, 3, 4, 5]
+queryAsync([1, 2, 3]).concat([4, 5]).toArray()  // returns [1, 2, 3, 4, 5]
 ```
 
 `concat` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -111,10 +136,10 @@ distinct<S>(selector: (element: T) => S): AsyncIterableQuery<T>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 42, 3, 4, 1]).distinct().toArray();  // returns [1, 42, 3, 4]
-query([{value: 1}, {value: 2}, {value: 1}])
+queryAsync([1, 42, 3, 4, 1]).distinct().toArray();  // returns [1, 42, 3, 4]
+queryAsync([{value: 1}, {value: 2}, {value: 1}])
   .distinct(elem => elem.value)
   .toArray(); // returns [{value: 1}, {value: 2}]
 ```
@@ -134,9 +159,9 @@ entries(): AsyncIterableQuery<[number, T]>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query(['Alice', 'Bob', 'David']).entries().toArray();
+queryAsync(['Alice', 'Bob', 'David']).entries().toArray();
 // returns [[0, 'Alice'], [1, 'Bob'], [2, 'David']]
 ```
 
@@ -158,10 +183,10 @@ every(predicate: (element: T, index: number) => boolean): boolean;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([2, 4, 9]).every(elem => elem > 0); // returns true
-query([7, 23, 3]).every(elem => elem % 3 === 0); // returns false
+queryAsync([2, 4, 9]).every(elem => elem > 0); // returns true
+queryAsync([7, 23, 3]).every(elem => elem % 3 === 0); // returns false
 ```
 
 ### `exclude`
@@ -182,10 +207,10 @@ exclude<S>(others: Iterable<T>, selector: (element: T) => S): AsyncIterableQuery
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([2, 0, 1, 8, 2]).exclude([0, 1]).toArray(); // returns [2, 8, 2]
-query([{id: 1}, {id: 2}])
+queryAsync([2, 0, 1, 8, 2]).exclude([0, 1]).toArray(); // returns [2, 8, 2]
+queryAsync([{id: 1}, {id: 2}])
   .exclude([{id: 2}, elem => elem.id])
   .toArray(); // returns [{id: 1}]
 ```
@@ -208,10 +233,10 @@ filter(predicate: (element: T, index: number) => boolean): AsyncIterableQuery<T>
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3, 4, 5]).filter(elem => elem < 3).toArray(); // returns [1, 2]
-query([1, 2, 3]).filter(elem > 10).toArray(); // returns []
+queryAsync([1, 2, 3, 4, 5]).filter(elem => elem < 3).toArray(); // returns [1, 2]
+queryAsync([1, 2, 3]).filter(elem > 10).toArray(); // returns []
 ```
 
 `filter` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -234,10 +259,10 @@ If no element satisfies the predicate, returns `undefined`.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3, 4, 5]).find(elem => elem % 2 === 0); // returns 2
-query([1, 2, 3]).find(elem > 10); // returns undefined
+queryAsync([1, 2, 3, 4, 5]).find(elem => elem % 2 === 0); // returns 2
+queryAsync([1, 2, 3]).find(elem > 10); // returns undefined
 ```
 
 ### `findIndex`
@@ -258,10 +283,10 @@ If no element satisfies the predicate, returns `-1`.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([7, 12, 15]).findIndex(elem => elem > 10 && elem < 15); // returns 1
-query([1, 2, 3]).findIndex(elem > 10); // returns -1
+queryAsync([7, 12, 15]).findIndex(elem => elem > 10 && elem < 15); // returns 1
+queryAsync([1, 2, 3]).findIndex(elem > 10); // returns -1
 ```
 
 ### `findLast`
@@ -282,10 +307,10 @@ If no element satisfies the predicate, returns `undefined`.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([11, 7, 21]).findLast(elem => elem > 10); // returns 21
-query([1, 2, 3]).findLast(elem > 10); // returns undefined
+queryAsync([11, 7, 21]).findLast(elem => elem > 10); // returns 21
+queryAsync([1, 2, 3]).findLast(elem > 10); // returns undefined
 ```
 
 ### `findLastIndex`
@@ -306,10 +331,10 @@ If not present, returns -1.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([11, 7, 21]).findLastIndex(elem => elem > 10); // returns 2
-query([1, 2, 3]).findLastIndex(elem > 10); // returns -1
+queryAsync([11, 7, 21]).findLastIndex(elem => elem > 10); // returns 2
+queryAsync([1, 2, 3]).findLastIndex(elem > 10); // returns -1
 ```
 
 ### `first`
@@ -327,10 +352,10 @@ For an empty sequence returns `undefined`.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query(['a', 'b', 'c']).first(); // returns 'a'
-query([]).first(); // returns undefined
+queryAsync(['a', 'b', 'c']).first(); // returns 'a'
+queryAsync([]).first(); // returns undefined
 ```
 
 ### `flat`
@@ -346,9 +371,9 @@ flat<T>(): AsyncIterable<T>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([{value: [1, 2], {values: [7, 9]}]).flat(elem => elem.value).toArray();
+queryAsync([{value: [1, 2], {values: [7, 9]}]).flat(elem => elem.value).toArray();
 // returns [1, 2, 7, 9]
 ```
 
@@ -370,9 +395,9 @@ forEach(action: (element: T, index: number) => void): Promise<void>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]).forEach(elem => console.log(elem));
+queryAsync([1, 2, 3]).forEach(elem => console.log(elem));
 // 1
 // 2
 // 3
@@ -408,7 +433,7 @@ the `joinSelector` function will be called with an empty array.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
 const books = [
   {title: 'Clean code', categoryId: 1 },
@@ -421,7 +446,7 @@ const categories = [
   {id: 2, name: 'Agile'},
 ];
 
-query(categories).groupJoin(
+queryAsync(categories).groupJoin(
   books,
   category => category.id,
   book => book.categoryId,
@@ -455,10 +480,10 @@ includes(element: T, fromIndex: number): Promise<boolean>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]).includes(2); // returns true
-query([1, 2, 3]).includes(0); // returns false
+queryAsync([1, 2, 3]).includes(2); // returns true
+queryAsync([1, 2, 3]).includes(0); // returns false
 ```
 
 ### `indexOf`
@@ -482,10 +507,10 @@ When an element is not found, returns -1.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query(['a', 'b', 'c']).indexOf('c'); // returns 2
-query(['a', 'b', 'c']).indexOf('x'); // returns -1
+queryAsync(['a', 'b', 'c']).indexOf('c'); // returns 2
+queryAsync(['a', 'b', 'c']).indexOf('x'); // returns -1
 ```
 
 ### `intersect`
@@ -506,10 +531,10 @@ intersect<S>(other: Iterable<T>, selector: (element: T) => S): AsyncIterableQuer
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]]).intersect([2, 3, 4]).toArray(); // returns [2, 3]
-query([{id: 1, name: 'Alice'}, {id: 2, name: 'Bob'})
+queryAsync([1, 2, 3]]).intersect([2, 3, 4]).toArray(); // returns [2, 3]
+queryAsync([{id: 1, name: 'Alice'}, {id: 2, name: 'Bob'})
   .intersect([{id: 3, name: 'David'}, {id: 1, name: 'Alice'}], elem => elem.id)
   .toArray(); // returns [{id: 1, name: 'Alice'}]
 ```
@@ -542,14 +567,14 @@ The `join` method works as an sql inner join.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3])
+queryAsync([1, 2, 3])
   .join([2, 3, 4], n => n, n => n, (a, b) => `${a}-${b}`)
   .toArray();
 // returns ['2-2', '3-3']
 
-query([{countryId: 1, code: '+1'}, {countryId: 2, code: '+44'}]])
+queryAsync([{countryId: 1, code: '+1'}, {countryId: 2, code: '+44'}]])
   .join(
     [{ id: 1, country: 'US' }, {id: 3, country: 'MD'}],
     left => left.countryId,
@@ -574,9 +599,9 @@ keys(): AsyncIterableQuery<number>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query(['a', 'b', 'c']).keys().toArray(); // returns [0, 1, 2]
+queryAsync(['a', 'b', 'c']).keys().toArray(); // returns [0, 1, 2]
 ```
 
 `keys` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -596,10 +621,10 @@ For an empty sequence returns `undefined`.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query(['a', 'b', 'c']).last(); // returns 'c'
-query([]).last(); // returns undefined
+queryAsync(['a', 'b', 'c']).last(); // returns 'c'
+queryAsync([]).last(); // returns undefined
 ```
 
 ### `lastIndexOf`
@@ -623,10 +648,10 @@ When an element is not found, returns -1.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query(['a', 'c', 'c']).lastIndexOf('c'); // returns 2
-query(['a', 'b', 'c']).lastIndexOf('x'); // returns -1
+queryAsync(['a', 'c', 'c']).lastIndexOf('c'); // returns 2
+queryAsync(['a', 'b', 'c']).lastIndexOf('x'); // returns -1
 ```
 
 ### `leftJoin`
@@ -657,14 +682,14 @@ the `joinSelector` function is called with an `undefined` right value.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3])
+queryAsync([1, 2, 3])
   .leftJoin([2, 3, 4, 2], n => n, n => n, (a, b) => `${a}-${b || '#'}`)
   .toArray();
 // returns ['1-#', '2-2', '2-2', '3-3']
 
-query([{book: 'History', owner: 3}, {book: 'Math', owner: 2}, {book: 'Art'}]])
+queryAsync([{book: 'History', owner: 3}, {book: 'Math', owner: 2}, {book: 'Art'}]])
   .leftJoin(
     [{id: 1, name: 'Alice'}, {id: 2, name: 'Bob'}, {id: 3, name: 'Eve'}],
     left => left.owner,
@@ -696,10 +721,10 @@ length(predicate: (element: T, index: number) => boolean): <number>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3, 4, 5]).length();  // returns 5
-query([1, 2, 3, 4, 5]).length(elem => elem > 2);  // returns 3
+queryAsync([1, 2, 3, 4, 5]).length();  // returns 5
+queryAsync([1, 2, 3, 4, 5]).length(elem => elem > 2);  // returns 3
 ```
 
 ### `map`
@@ -718,9 +743,9 @@ map<S>(selector: (element: T, index: number) => S): AsyncIterableQuery<S>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]).map(elem => elem * 10).toArray(); // returns [10, 20, 30]
+queryAsync([1, 2, 3]).map(elem => elem * 10).toArray(); // returns [10, 20, 30]
 ```
 
 `map` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -747,11 +772,11 @@ If sequence is empty, returns `undefined`.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]).max(); // returns 3
-query([]).max(); // returns undefined
-query([7, 3, 11, 5]).max((a, b) => (1 / a) - (1 / b)); // returns 3
+queryAsync([1, 2, 3]).max(); // returns 3
+queryAsync([]).max(); // returns undefined
+queryAsync([7, 3, 11, 5]).max((a, b) => (1 / a) - (1 / b)); // returns 3
 ```
 
 ### `min`
@@ -776,11 +801,11 @@ If sequence is empty, returns `undefined`.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]).min(); // returns 1
-query([]).min(); // returns undefined
-query([7, 3, 11, 5]).min((a, b) => (1 / a) - (1 / b)); // returns 11
+queryAsync([1, 2, 3]).min(); // returns 1
+queryAsync([]).min(); // returns undefined
+queryAsync([7, 3, 11, 5]).min((a, b) => (1 / a) - (1 / b)); // returns 11
 ```
 
 ### `nth`
@@ -802,11 +827,11 @@ If index is out of the range, returns `undefined` .
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query(['a', 'b', 'c', 'd']).nth(2)  // returns 'c'
-query(['a', 'b', 'c', 'd']).nth(-1) // returns 'd'
-query(['a', 'b', 'c', 'd']).nth(10) // returns undefined
+queryAsync(['a', 'b', 'c', 'd']).nth(2)  // returns 'c'
+queryAsync(['a', 'b', 'c', 'd']).nth(-1) // returns 'd'
+queryAsync(['a', 'b', 'c', 'd']).nth(10) // returns undefined
 ```
 
 ### `prepend`
@@ -825,9 +850,9 @@ prepend(other: AsyncIterable<T> | T): AsyncIterableQuery<T>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]).prepend([9, 10]).toArray(); // returns [1, 2, 3, 9, 10]
+queryAsync([1, 2, 3]).prepend([9, 10]).toArray(); // returns [1, 2, 3, 9, 10]
 ```
 
 `prepend` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -861,10 +886,10 @@ Calling `reduce` on an empty sequence without an initial value throws an error.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([ 1, 2, 42, 0 ]).reduce((acc, elem) => Math.max(acc, elem)); // returns 42
-query([ 1, 2, 3 ]).reduce((acc, elem) => acc + elem, 10); // returns 16
+queryAsync([ 1, 2, 42, 0 ]).reduce((acc, elem) => Math.max(acc, elem)); // returns 42
+queryAsync([ 1, 2, 3 ]).reduce((acc, elem) => acc + elem, 10); // returns 16
 ```
 
 ### `skip`
@@ -886,11 +911,11 @@ Accepts also a negative count, in which case skips the elements from the end of 
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3, 4, 5]).skip(2).toArray(); // [3, 4, 5]
-query([1, 2, 3, 4, 5]).skip(10).toArray(); // []
-query([1, 2, 3, 4, 5]).skip(-2).toArray(); // [1, 2, 3]
+queryAsync([1, 2, 3, 4, 5]).skip(2).toArray(); // [3, 4, 5]
+queryAsync([1, 2, 3, 4, 5]).skip(10).toArray(); // []
+queryAsync([1, 2, 3, 4, 5]).skip(-2).toArray(); // [1, 2, 3]
 ```
 
 `skip` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -914,9 +939,9 @@ The `end` index is not included in the result.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3, 4, 5]).slice(1, 3).toArray(); // returns [2, 3]
+queryAsync([1, 2, 3, 4, 5]).slice(1, 3).toArray(); // returns [2, 3]
 ```
 
 `slice` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -937,10 +962,10 @@ some(predicate: (element: T, index: number) => boolean): Promise<boolean>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3, 42, 5]).some(elem => elem > 40); // returns true
-query([1, 2, 3, 42, 5]).some(elem => elem < 0); // returns false
+queryAsync([1, 2, 3, 42, 5]).some(elem => elem > 40); // returns true
+queryAsync([1, 2, 3, 42, 5]).some(elem => elem < 0); // returns false
 ```
 
 ### `sum`
@@ -962,10 +987,10 @@ Optionally, a function can be provided to apply a transformation and map each el
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]).sum(); // returns 6
-query([{value: 1}, {value: 2}]).sum(elem => elem.value); // returns 3
+queryAsync([1, 2, 3]).sum(); // returns 6
+queryAsync([{value: 1}, {value: 2}]).sum(elem => elem.value); // returns 3
 ```
 
 ### `take`
@@ -986,11 +1011,11 @@ If a negative count is specified, returns elements from the end of the sequence.
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]).take(2); // returns [1, 2]
-query([1, 2, 3]).take(-2); // returns [2, 3]
-query([1, 2, 3]).take(10); // returns [1, 2, 3]
+queryAsync([1, 2, 3]).take(2); // returns [1, 2]
+queryAsync([1, 2, 3]).take(-2); // returns [2, 3]
+queryAsync([1, 2, 3]).take(10); // returns [1, 2, 3]
 ```
 
 `take` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -1013,11 +1038,11 @@ union<S>(other: AsyncIterable<T>, selector: (element: T) => S): AsyncIterableQue
 Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]]).union([2, 3, 4]).toArray(); // returns [1, 2, 3, 4]
+queryAsync([1, 2, 3]]).union([2, 3, 4]).toArray(); // returns [1, 2, 3, 4]
 
-query([{id: 1, name: 'Alice'}, {id: 2, name: 'Bob'})
+queryAsync([{id: 1, name: 'Alice'}, {id: 2, name: 'Bob'})
   .union([{id: 3, name: 'David'}, {id: 1, name: 'Alice'}], elem => elem.id)
   .toArray();
 // returns [
@@ -1041,9 +1066,9 @@ values(): AsyncIterableQuery<T>;
 > Example
 
 ```ts
-import { query } from 'itiriri';
+import { queryAsync } from 'itiriri-async';
 
-query([1, 2, 3]]).values().toArray(); // returns [1, 2, 3]
+queryAsync([1, 2, 3]]).values().toArray(); // returns [1, 2, 3]
 ```
 
 `values` *is a deferred method and is executed only when the result sequence is iterated.*
