@@ -7,5 +7,5 @@ export async function awaitAll<TElement>(
     buffer.push(element);
   }
 
-  return <Iterable<TElement>>buffer;
+  return buffer;
 }
