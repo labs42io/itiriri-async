@@ -63,17 +63,17 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
     return forEach(this.source, action);
   }
 
-  concat(other: Promise<T> | AsyncIterable<T>): AsyncIterableQuery<T> {
+  concat(other: T | Promise<T> | AsyncIterable<T>): AsyncIterableQuery<T> {
     return isAsyncIterable(other) ?
       new QueryAsync(concat(this.source, other)) :
       new QueryAsync(concat(this.source, (async function* (e) { yield e; })(other)));
   }
 
-  prepend(other: T | AsyncIterable<T>): AsyncIterableQuery<T> {
+  prepend(other: T | Promise<T> | AsyncIterable<T>): AsyncIterableQuery<T> {
     return isAsyncIterable(other) ?
       new QueryAsync(concat(other, this.source)) :
       new QueryAsync(concat(
-        (async function* (e) { yield await Promise.resolve(e); })(other),
+        (async function* (e) { yield await e; })(other),
         this,
       ));
   }
