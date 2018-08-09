@@ -26,7 +26,7 @@ first2Uncompleted();
 // [ 'delectus aut autem', 'quis ut nam facilis et officia qui' ]
 ```
 
-Check examples folder for more
+> Check examples folder for more
 
 ---
 
@@ -91,9 +91,16 @@ For a sequence with no elements returns `undefined`.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([41, 42, 43]).average()  // returns 42
-queryAsync([{value: 1}, {value: 2}]).average(elem => elem.value) // returns 1.5
-queryAsync([]).average() // returns undefined
+async function* generator1() {
+  yield* [41, 42, 43];
+}
+
+async function* generator2() {
+  yield* [{value: 1}, {value: 2}];
+}
+
+queryAsync(generator1()).average()  // returns Promise<42>
+queryAsync(generator2()).average(elem => elem.value) // returns Promise<1.5>
 ```
 
 ### `concat`
