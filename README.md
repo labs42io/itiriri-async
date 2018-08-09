@@ -609,8 +609,14 @@ includes(element: T, fromIndex: number): Promise<boolean>;
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]).includes(2); // returns true
-queryAsync([1, 2, 3]).includes(0); // returns false
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+(async function () {
+  await queryAsync(generator()).includes(2); // returns: true
+  await queryAsync(generator()).includes(4); // returns: false
+})();
 ```
 
 ### `indexOf`
@@ -636,8 +642,14 @@ When an element is not found, returns -1.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync(['a', 'b', 'c']).indexOf('c'); // returns 2
-queryAsync(['a', 'b', 'c']).indexOf('x'); // returns -1
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+(async function () {
+  await queryAsync(generator()).indexOf(2); // returns: 1
+  await queryAsync(generator()).indexOf(4); // returns: -1
+})();
 ```
 
 ### `intersect`
@@ -660,10 +672,14 @@ intersect<S>(other: Iterable<T>, selector: (element: T) => S): AsyncIterableQuer
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-queryAsync([1, 2, 3]]).intersect([2, 3, 4]).toArray(); // returns [2, 3]
-queryAsync([{id: 1, name: 'Alice'}, {id: 2, name: 'Bob'})
-  .intersect([{id: 3, name: 'David'}, {id: 1, name: 'Alice'}], elem => elem.id)
-  .toArray(); // returns [{id: 1, name: 'Alice'}]
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+(async function () {
+  const q = await queryAsync(generator()).intersect([1, 2, 4]).awaitAll();
+  q.toArray(); // returns: [1, 2]
+})();
 ```
 
 `intersect` *is a deferred method and is executed only when the result sequence is iterated.*
