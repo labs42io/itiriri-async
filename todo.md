@@ -1,11 +1,5 @@
 # code review
 
-* Fix `travis` for this package.
-
-* `Promise.resolve` is not needed in `async` functions (used especially in reducers).
-
-* In `awaitAll.ts` no need to cast `buffer`. Arrays are already iterables.
-
 * Prefer method overloading over optional params in:
   * `AsyncIterableFilter.slice`
   * `AsyncIterableJoin.leftJoin`
