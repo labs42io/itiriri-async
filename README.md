@@ -572,27 +572,17 @@ the `joinSelector` function will be called with an empty array.
 ```ts
 import { queryAsync } from 'itiriri-async';
 
-const books = [
-  {title: 'Clean code', categoryId: 1 },
-  {title: 'Code complete', categoryId: 1},
-  {title: 'Scrum', categoryId: 2},
-];
+async function* generator() {
+  yield* [1, 2, 3];
+}
 
-const categories = [
-  {id: 1, name: 'CS'},
-  {id: 2, name: 'Agile'},
-];
-
-queryAsync(categories).groupJoin(
-  books,
-  category => category.id,
-  book => book.categoryId,
-  (category, books) => ({ category: category.name, books: books.map(b => b.title) })
-).toArray();
-// [
-//   {category: 'CS', books: ['Clean code', 'Code complete']},
-//   {category: 'Agile'}, books: ['Scrum']
-// ]
+(async function () {
+  const q = await queryAsync(generator()).groupJoin([1, 2, 3, 1, 1, 2], x => x, x => x, (x, y) => ({ x, y })).awaitAll();
+  q.toArray();
+})();
+//[ { x: 1, y: [ 1, 1, 1 ] },
+//  { x: 2, y: [ 2, 2 ] },
+//  { x: 3, y: [ 3 ] } ]
 ```
 
 `groupJoin` *is a deferred method and is executed only when the result sequence is iterated.*
