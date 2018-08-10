@@ -2,7 +2,7 @@
   "name": "itiriri-async",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "A library built for ES6 async iteration protocol.",
+  "description": "A library built for async iteration protocol.",
   "private": true,
   "scripts": {
     "test": "gulp test",
