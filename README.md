@@ -42,7 +42,7 @@ $ npm install 'itiriri-async' --save
 Importing:
 
 ```javascript
-import { query } from 'itiriri-async';
+import { queryAsync } from 'itiriri-async';
 ```
 
 ---
