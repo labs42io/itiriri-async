@@ -6,6 +6,9 @@
 A library for asynchronous iteration.
 
 ```ts
+import * as WebRequest from 'web-request';
+import { queryAsync } from 'itiriri-async';
+
 async function* generator() {
   let id = 1;
   while (true) {
@@ -15,7 +18,7 @@ async function* generator() {
 
 async function first2Uncompleted() {
   const q = await queryAsync(generator())
-    .filter(x => x.completed === false)
+    .filter(x => !x.completed)
     .map(x => x.title)
     .take(2)
     .awaitAll();
@@ -27,6 +30,20 @@ first2Uncompleted();
 ```
 
 > Check examples folder for more
+
+## Installation
+
+Using npm:
+
+```javascript
+$ npm install 'itiriri-async' --save
+```
+
+Importing:
+
+```javascript
+import { query } from 'itiriri-async';
+```
 
 ---
 
