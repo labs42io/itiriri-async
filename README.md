@@ -33,6 +33,7 @@ first2Uncompleted();
 ## Complete list of methods
 
 * [average](#average)
+* [awaitAll](#awaitAll)
 * [concat](#concat)
 * [distinct](#distinct)
 * [entries](#entries)
@@ -101,6 +102,29 @@ async function* generator2() {
 
 queryAsync(generator1()).average()  // returns Promise<42>
 queryAsync(generator2()).average(elem => elem.value) // returns Promise<1.5>
+```
+
+### `awaitAll`
+
+Await for all elements an return IterableQuery.
+
+> Syntax
+
+```ts
+awaitAll(): Promise<IterableQuery<T>>
+```
+
+> Example
+
+```ts
+import { queryAsync } from 'itiriri-async';
+
+async function* generator() {
+  yield* [41, 40, 43];
+}
+
+const q = queryAsync(generator()).awaitAll()  // returns IterableQuery([41, 40, 43])
+q.sort(); // returns: [40, 41, 43]
 ```
 
 ### `concat`
