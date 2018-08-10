@@ -1,6 +1,6 @@
 {
   "name": "itiriri-async",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "description": "A library built for async iteration protocol.",
   "private": true,
