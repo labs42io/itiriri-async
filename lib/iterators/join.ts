@@ -14,9 +14,10 @@ export function join<TLeft, TRight, TKey, TResult>(
 
     for await (const element of source) {
       const leftKey = leftKeySelector(element, index++);
+      const rightValues = rightMap.get(leftKey);
 
-      if (rightMap.has(leftKey)) {
-        for (const rightMatch of rightMap.get(leftKey)) {
+      if (rightValues) {
+        for (const rightMatch of rightValues) {
           yield await joinSelector(element, rightMatch);
         }
       }

@@ -34,14 +34,14 @@ describe('reducers/lastIndexOf', () => {
     it('Should return first index', async () => {
       const source = [1, 4, 3, 2];
 
-      expect(await lastIndexOf(fromArray(source), (elem, idx) => idx === 0)).to.be.equal(0);
+      expect(await lastIndexOf(fromArray(source), (_, idx) => idx === 0)).to.be.equal(0);
     });
 
     it('Should return last index', async () => {
       const source = [1, 4, 3, 2, 5];
 
       expect(await lastIndexOf(
-        fromArray(source), (elem, idx) => { return idx * 2 === 4; },
+        fromArray(source), (_, idx) => { return idx * 2 === 4; },
       )).to.be.equal(2);
     });
 
@@ -49,14 +49,14 @@ describe('reducers/lastIndexOf', () => {
       const source = [1, 4, 3, 2, 5];
 
       expect(await lastIndexOf(
-        fromArray(source), (elem, idx) => { return idx % 2 === 0; }),
+        fromArray(source), (_, idx) => { return idx % 2 === 0; }),
       ).to.be.equal(4);
     });
 
     it('Should return the middle index', async () => {
       const source = [1, 40, 3, 200, 1001];
 
-      expect(await lastIndexOf(fromArray(source), (elem, idx) => idx === 2)).to.be.equal(2);
+      expect(await lastIndexOf(fromArray(source), (_, idx) => idx === 2)).to.be.equal(2);
     });
   });
 

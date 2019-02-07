@@ -54,7 +54,7 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
   }
 
   keys(): AsyncIterableQuery<number> {
-    return new QueryAsync(map(this.source, (elem, idx) => idx));
+    return new QueryAsync(map(this.source, (_, idx) => idx));
   }
 
   values(): AsyncIterableQuery<T> {
@@ -94,7 +94,7 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
   // #endregion
 
   // #region IterableValue implementation
-  nth(index: number): Promise<T> {
+  nth(index: number): Promise<T | undefined> {
     return nth(this.source, index);
   }
 
@@ -118,35 +118,40 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
     return length(filter(this.source, predicate));
   }
 
-  first(): Promise<T> {
+  first(): Promise<T | undefined> {
     return first(this.source);
   }
 
-  find(predicate: (element: T, index: number) => boolean): Promise<T> {
+  find(predicate: (element: T, index: number) => boolean): Promise<T | undefined> {
     return first(filter(this.source, predicate));
   }
 
-  last(): Promise<T> {
+  last(): Promise<T | undefined> {
     return last(this.source);
   }
 
-  findLast(predicate: (element: T, index: number) => boolean): Promise<T> {
+  findLast(predicate: (element: T, index: number) => boolean): Promise<T | undefined> {
     return last(filter(this.source, predicate));
   }
 
-  average(selector: (element: T, index: number) => number = element<number>()): Promise<number> {
+  average(
+    selector: (element: T, index: number) => number = element<number>(),
+  ): Promise<number | undefined> {
+
     return average(map(this.source, selector));
   }
 
-  min(compareFn: (element1: T, element2: T) => number = comparer<T>()): Promise<T> {
+  min(compareFn: (element1: T, element2: T) => number = comparer<T>()): Promise<T | undefined> {
     return min(this.source, compareFn);
   }
 
-  max(compareFn: (element1: T, element2: T) => number = comparer<T>()): Promise<T> {
+  max(compareFn: (element1: T, element2: T) => number = comparer<T>()): Promise<T | undefined> {
     return max(this.source, compareFn);
   }
 
-  sum(selector: (element: T, index: number) => number = element<number>()): Promise<number> {
+  sum(
+    selector: (element: T, index: number) => number = element<number>(),
+  ): Promise<number | undefined> {
     return sum(map(this.source, selector));
   }
 
@@ -285,11 +290,11 @@ class QueryAsync<T> implements AsyncIterableQuery<T>{
 }
 
 function element<T>() {
-  return (e: any, index?: number) => <T>e;
+  return (e: any) => <T>e;
 }
 
-function alwaysTrue<T>() {
-  return (e: any) => true;
+function alwaysTrue() {
+  return () => true;
 }
 
 function comparer<T>() {

@@ -10,6 +10,6 @@ export function skip<TElement>(
   }
 
   return asyncIterable(async function* () {
-    yield* filter(source, (element, index) => index >= count);
+    yield* filter(source, (_, index) => index >= count);
   });
 }

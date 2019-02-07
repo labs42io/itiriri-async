@@ -1,5 +1,5 @@
 export async function toArray<T>(iterator: AsyncIterable<T>) {
-  const result = [];
+  const result: T[] = [];
   for await (const element of iterator) {
     result.push(element);
   }

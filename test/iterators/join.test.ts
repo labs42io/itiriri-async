@@ -39,7 +39,7 @@ describe('iterators/join', () => {
         others,
         x => x.awesomeness,
         x => x.awesomeness,
-        (e1, e2) => 'Playing ' + e1.name + ' in ' + e2.name,
+        (e1, e2) => `Playing ${e1.name} in ${e2.name}`,
       );
 
       expect(await toArray(iterator)).to.be.deep.equal([

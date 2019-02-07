@@ -156,7 +156,7 @@ describe('Query (value)', () => {
       const source = [1, 3, 4, 33, 2, 4];
       const q = queryAsync(fromArray(source));
 
-      expect(await q.length((elem, idx) => idx > 2)).to.be.equal(3);
+      expect(await q.length((_, idx) => idx > 2)).to.be.equal(3);
     });
   });
 
@@ -209,7 +209,7 @@ describe('Query (value)', () => {
       const source = numberGenerator(3, 3);
       const q = queryAsync(source);
 
-      expect(await q.find((elem, idx) => idx === 10)).to.be.equal(33);
+      expect(await q.find((_, idx) => idx === 10)).to.be.equal(33);
     });
   });
 
@@ -372,7 +372,7 @@ describe('Query (value)', () => {
       ];
       const q = queryAsync(fromArray(source));
 
-      expect(await q.reduce((x, e, idx) => x + e.val, 0)).to.be.equal(20);
+      expect(await q.reduce((x, e) => x + e.val, 0)).to.be.equal(20);
     });
 
     it('Should return abc', async () => {
@@ -383,22 +383,22 @@ describe('Query (value)', () => {
       ];
       const q = queryAsync(fromArray(source));
 
-      expect(await q.reduce((x, e, idx) => x + e.tag, '')).to.be.equal('abc');
+      expect(await q.reduce((x, e) => x + e.tag, '')).to.be.equal('abc');
     });
   });
 
   describe('When calling forEach', () => {
-    it('Should return 4 transfromed elements', async () => {
+    it('Should return 4 transformed elements', async () => {
       const source = numberGenerator();
-      const result = [];
-      await queryAsync(source).take(4).forEach((elem, idx) => result.push(elem + 10));
+      const result: number[] = [];
+      await queryAsync(source).take(4).forEach(elem => result.push(elem + 10));
 
       expect(result).to.be.deep.equal([10, 11, 12, 13]);
     });
 
     it('Should return 3 transformed elements', async () => {
       const q = queryAsync(numberGenerator(10, 10));
-      const result = [];
+      const result: number[] = [];
       await q.take(3).forEach((elem, idx) => result.push(elem + idx));
 
       expect(result).to.be.deep.equal([

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { queryAsync } from '../lib/QueryAsync';
 import { SpyAsyncIterable } from './helpers/SpyAsyncIterable';
-import { numbers as numberGenerator, fromArray } from './helpers/asyncGenerators';
+import { fromArray } from './helpers/asyncGenerators';
 
 describe('QueryAsync', () => {
   describe('When calling constructor', () => {

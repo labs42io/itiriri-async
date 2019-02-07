@@ -11,7 +11,7 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
    * @param  {number} index element's index
    * @returns Promise<T>
    */
-  nth(index: number): Promise<T>;
+  nth(index: number): Promise<T | undefined>;
 
   /**
    * Returns a promise with the iterable from the original async iterable
@@ -87,7 +87,7 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
    * For an empty sequence returns undefined.
    * @returns Promise<T>
    */
-  first(): Promise<T>;
+  first(): Promise<T | undefined>;
 
   /**
    * Finds the first element that satisfies the specified predicate.
@@ -95,14 +95,14 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
    * @param  {(element:T,index:number)=>boolean} predicate element predicate
    * @returns Promise<T>
    */
-  find(predicate: (element: T, index: number) => boolean): Promise<T>;
+  find(predicate: (element: T, index: number) => boolean): Promise<T | undefined>;
 
   /**
    * Returns the last element.
    * For an empty sequence returns undefined.
    * @returns Promise<T>
    */
-  last(): Promise<T>;
+  last(): Promise<T | undefined>;
 
   /**
    * Finds the last element that satisfies the specified predicate.
@@ -110,14 +110,14 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
    * @param  {(element:T,index:number)=>boolean} predicate element predicate
    * @returns Promise<T>
    */
-  findLast(predicate: (element: T, index: number) => boolean): Promise<T>;
+  findLast(predicate: (element: T, index: number) => boolean): Promise<T | undefined>;
 
   /**
    * Returns the average value.
    * If sequence is empty, returns undefined.
    * @returns Promise<number>
    */
-  average(): Promise<number>;
+  average(): Promise<number | undefined>;
 
   /**
    * Returns the average value over a sequence of transformed values.
@@ -125,14 +125,14 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
    * @param  {(element:T,index:number)=>number} selector element transformation
    * @returns Promise<number>
    */
-  average(selector: (element: T, index: number) => number): Promise<number>;
+  average(selector: (element: T, index: number) => number): Promise<number | undefined>;
 
   /**
    * Returns the minimum value.
    * If sequence is empty, returns undefined.
    * @returns Promise<T>
    */
-  min(): Promise<T>;
+  min(): Promise<T | undefined>;
 
   /**
    * Returns the minimum value from a sequence using a comparer function.
@@ -141,14 +141,14 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
    * for element1<element2, 1 for element1>element2, 0 for equal values
    * @returns Promise<T>
    */
-  min(compareFn: (element1: T, element2: T) => number): Promise<T>;
+  min(compareFn: (element1: T, element2: T) => number): Promise<T | undefined>;
 
   /**
    * Returns the maximum value.
    * If sequence is empty, returns undefined.
    * @returns Promise<T>
    */
-  max(): Promise<T>;
+  max(): Promise<T | undefined>;
 
   /**
    * Returns the maximum value from a sequence using a compare function.
@@ -157,14 +157,14 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
    * for element1<element2, 1 for element1>element2, 0 for equal values
    * @returns Promise<T>
    */
-  max(compareFn: (element1: T, element2: T) => number): Promise<T>;
+  max(compareFn: (element1: T, element2: T) => number): Promise<T | undefined>;
 
   /**
    * Returns the sum of all elements.
    * If sequence is empty, returns undefined.
    * @returns Promise<number>
    */
-  sum(): Promise<number>;
+  sum(): Promise<number | undefined>;
 
   /**
    * Returns the sum of elements from a sequence of transformed values.
@@ -172,7 +172,7 @@ export interface AsyncIterableValue<T> extends AsyncIterable<T> {
    * @param  {(element:T,index:number)=>number} selector element transformation
    * @returns Promise<number>
    */
-  sum(selector: (element: T, index: number) => number): Promise<number>;
+  sum(selector: (element: T, index: number) => number): Promise<number | undefined>;
 
   /**
    * Applies a function against an accumulator and each element to reduce it to a single value

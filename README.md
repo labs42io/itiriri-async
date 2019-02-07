@@ -1360,15 +1360,3 @@ async function* generator() {
 ## License
 
 [MIT](LICENSE)
-
-## Keywords
-
-[iterator](https://www.npmjs.com/search?q=keywords:iterator)
-[iterable](https://www.npmjs.com/search?q=keywords:iterable)
-[async](https://www.npmjs.com/search?q=keywords:async)
-[filter](https://www.npmjs.com/search?q=keywords:filter)
-[map](https://www.npmjs.com/search?q=keywords:map)
-[query](https://www.npmjs.com/search?q=keywords:query)
-[collections](https://www.npmjs.com/search?q=keywords:collections)
-[deferred](https://www.npmjs.com/search?q=keywords:deferred)
-[lazy](https://www.npmjs.com/search?q=keywords:lazy)

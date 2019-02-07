@@ -1,4 +1,4 @@
-export async function sum(source: AsyncIterable<number>): Promise<number> {
+export async function sum(source: AsyncIterable<number>): Promise<number | undefined> {
   let [result, hasElements] = [0, false];
 
   for await (const element of source) {

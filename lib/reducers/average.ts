@@ -1,4 +1,4 @@
-export async function average(source: AsyncIterable<number>): Promise<number> {
+export async function average(source: AsyncIterable<number>): Promise<number | undefined> {
   let [s, n] = [0, 0];
 
   for await (const element of source) {

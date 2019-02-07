@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { numbers as numberGenerator, fromArray } from '../helpers/asyncGenerators';
-import { SpyIterable } from '../helpers/SpyIterable';
 import { SpyAsyncIterable } from '../helpers/SpyAsyncIterable';
 import { queryAsync } from '../../lib/QueryAsync';
 import { toArray } from '../helpers/toArray';

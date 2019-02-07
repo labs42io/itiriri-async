@@ -60,7 +60,7 @@ describe('Query (predicate)', () => {
       ];
       const q = queryAsync(fromArray(source));
 
-      expect(await q.every((elem, idx) => idx < 10)).to.be.true;
+      expect(await q.every((_, idx) => idx < 10)).to.be.true;
     });
   });
 
@@ -98,7 +98,7 @@ describe('Query (predicate)', () => {
       ];
       const q = queryAsync(fromArray(source));
 
-      expect(await q.some((elem, idx) => idx < 10)).to.be.true;
+      expect(await q.some((_, idx) => idx < 10)).to.be.true;
     });
   });
 });

@@ -8,7 +8,7 @@ describe('Query (filter)', () => {
   describe('When calling filter', () => {
     it('Should be a deferred method', async () => {
       const source = new SpyAsyncIterable(numberGenerator());
-      queryAsync(source).filter(x => true);
+      queryAsync(source).filter(() => true);
 
       expect(source.wasIterated).to.be.false;
     });
@@ -22,7 +22,7 @@ describe('Query (filter)', () => {
 
     it('Should return array of 1 element', async () => {
       const source = [0, -4, 4, 30, -10, 10];
-      const q = queryAsync(fromArray(source)).filter((elem, idx) => idx === 0);
+      const q = queryAsync(fromArray(source)).filter((_, idx) => idx === 0);
 
       expect(await toArray(q)).to.be.deep.equal([0]);
     });

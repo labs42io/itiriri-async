@@ -13,7 +13,12 @@
     "sourceMap": true,
     "rootDir": ".",
     "outDir": "build/compiled",
-    "declaration": true
+    "declaration": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "removeComments": true
   },
   "exclude": [
     "build",

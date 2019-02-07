@@ -41,7 +41,7 @@ describe('reducers/indexOf', () => {
     it('Should return first index', async () => {
       const source = [1, 4, 3, 2];
 
-      expect(await indexOf(fromArray(source), (elem, idx) => idx === 0)).to.be.equal(0);
+      expect(await indexOf(fromArray(source), (_, idx) => idx === 0)).to.be.equal(0);
     });
 
     it('Should return last index', async () => {
@@ -49,14 +49,14 @@ describe('reducers/indexOf', () => {
 
       expect(await indexOf(
         fromArray(source),
-        (elem, idx) => { return idx * 2 === 4; }),
+        (_, idx) => { return idx * 2 === 4; }),
       ).to.be.equal(2);
     });
 
     it('Should return the middle index', async () => {
       const source = [1, 40, 3, 200, 1001];
 
-      expect(await indexOf(fromArray(source), (elem, idx) => idx === 2)).to.be.equal(2);
+      expect(await indexOf(fromArray(source), (_, idx) => idx === 2)).to.be.equal(2);
     });
   });
 

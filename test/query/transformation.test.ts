@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { SpyIterable } from '../helpers/SpyIterable';
 import { SpyAsyncIterable } from '../helpers/SpyAsyncIterable';
 import { queryAsync } from '../../lib/QueryAsync';
 import { fromArray } from '../helpers/asyncGenerators';
@@ -47,8 +46,8 @@ describe('Query (transformation)', () => {
 
     it('Should return array of 5 elements', async () => {
       const source = [[1, 2, 3], [4, 5]];
-      const q = queryAsync(fromArray(source)).flat((elem, idx) => {
-        const res = [];
+      const q = queryAsync(fromArray(source)).flat((elem) => {
+        const res: number[] = [];
 
         for (const element of elem) {
           res.push(element);
