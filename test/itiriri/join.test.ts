@@ -1,16 +1,16 @@
 import { expect } from 'chai';
-import { queryAsync } from '../../lib/QueryAsync';
+import { default as itiririAsync } from '../../lib';
+import { fromArray } from '../helpers/asyncGenerators';
 import { SpyAsyncIterable } from '../helpers/SpyAsyncIterable';
 import { SpyIterable } from '../helpers/SpyIterable';
-import { fromArray } from '../helpers/asyncGenerators';
 import { toArray } from '../helpers/toArray';
 
-describe('Query (join)', () => {
+describe('ItiririAsync (join)', () => {
   describe('When calling join', () => {
     it('Should be a deferred method', async () => {
       const source1 = new SpyAsyncIterable(fromArray([]));
       const source2 = new SpyIterable([]);
-      await queryAsync(source1).join(source2, x => x, x => x, x => x);
+      await itiririAsync(source1).join(source2, x => x, x => x, x => x);
 
       expect(source1.wasIterated).to.be.false;
       expect(source2.wasIterated).to.be.false;
@@ -19,7 +19,7 @@ describe('Query (join)', () => {
     it('Should return array of 2 elements', async () => {
       const source1 = [0, 4, 5, 1];
       const source2 = [-1, 4, 5, -1];
-      const q = queryAsync(fromArray(source1)).join(source2, x => x, x => x, x => x);
+      const q = itiririAsync(fromArray(source1)).join(source2, x => x, x => x, x => x);
 
       expect(await toArray(q)).to.deep.equal([4, 5]);
     });
@@ -35,7 +35,7 @@ describe('Query (join)', () => {
         { val: 2, tag: 'a' },
         { val: 2222, tag: 'c' },
       ];
-      const q = queryAsync(fromArray(source1)).join(
+      const q = itiririAsync(fromArray(source1)).join(
         source2,
         x => x.tag,
         x => x.tag,
@@ -50,7 +50,7 @@ describe('Query (join)', () => {
     it('Should be a deferred method', async () => {
       const source1 = new SpyAsyncIterable(fromArray([]));
       const source2 = new SpyIterable([]);
-      await queryAsync(source1).leftJoin(source2, x => x, x => x, x => x);
+      await itiririAsync(source1).leftJoin(source2, x => x, x => x, x => x);
 
       expect(source1.wasIterated).to.be.false;
       expect(source2.wasIterated).to.be.false;
@@ -59,7 +59,7 @@ describe('Query (join)', () => {
     it('Should return array of 4 elements', async () => {
       const source1 = [0, 4, 5, 1];
       const source2 = [-1, 4, 5, -1];
-      const q = queryAsync(fromArray(source1)).leftJoin(
+      const q = itiririAsync(fromArray(source1)).leftJoin(
         source2,
         x => x,
         x => x,
@@ -79,7 +79,7 @@ describe('Query (join)', () => {
     it('Should be a deferred method', async () => {
       const source1 = new SpyAsyncIterable(fromArray([]));
       const source2 = new SpyIterable([]);
-      await queryAsync(source1).groupJoin(source2, x => x, x => x, x => x);
+      await itiririAsync(source1).groupJoin(source2, x => x, x => x, x => x);
 
       expect(source1.wasIterated).to.be.false;
       expect(source2.wasIterated).to.be.false;
@@ -88,7 +88,7 @@ describe('Query (join)', () => {
     it('Should return array of 1 elements', async () => {
       const source1 = [0, 4, 5, 1];
       const source2 = [-1, 5, 5, 5, 1];
-      const q = queryAsync(fromArray(source1)).groupJoin(
+      const q = itiririAsync(fromArray(source1)).groupJoin(
         source2,
         x => x,
         x => x,

@@ -1,19 +1,31 @@
 import * as WebRequest from 'web-request';
-import { queryAsync } from '../lib';
+import { default as itiririAsync } from '../lib';
 
-async function* generator() {
+type ToDo = {
+  userId: number,
+  id: number,
+  title: string,
+  completed: boolean,
+};
+
+async function* todosAsync(): AsyncIterableIterator<ToDo> {
   let id = 1;
   while (true) {
-    yield WebRequest.json<any>(`https://jsonplaceholder.typicode.com/todos/${id++}`);
+    yield await WebRequest.json<ToDo>(`https://jsonplaceholder.typicode.com/todos/${id++}`);
   }
 }
 
-async function first2Uncompleted() {
-  const q = await queryAsync(generator()).filter(x => x.completed === false).take(2).awaitAll();
-  console.log(q.toArray());
+async function showTop2ToDos(): Promise<void> {
+  const todos = await itiririAsync(todosAsync())
+    .filter(x => !x.completed)
+    .take(2)
+    .awaitAll();
+
+  console.log(todos.toArray());
 }
 
-first2Uncompleted();
+console.log('Next 2 TODOs:');
+showTop2ToDos();
 
 /*
 [ { userId: 1,
@@ -26,11 +38,17 @@ first2Uncompleted();
     completed: false }]
 */
 
-async function forAllCompleted() {
-  queryAsync(generator()).filter(e => e.completed === true).forEach(e => console.log(e));
+async function showCompletedToDos() {
+  const completed = itiririAsync(todosAsync())
+    .filter(e => e.completed === true);
+
+  for await (const todo of completed) {
+    console.log(todo);
+  }
 }
 
-forAllCompleted();
+console.log('All completed TODOs:');
+showCompletedToDos();
 
 /*
 { userId: 1, id: 4, title: 'et porro tempora', completed: true }

@@ -1,13 +1,13 @@
 import { expect } from 'chai';
-import { queryAsync } from '../lib/QueryAsync';
-import { SpyAsyncIterable } from './helpers/SpyAsyncIterable';
+import { default as itiririAsync } from '../lib';
 import { fromArray } from './helpers/asyncGenerators';
+import { SpyAsyncIterable } from './helpers/SpyAsyncIterable';
 
-describe('QueryAsync', () => {
+describe('ItiririAsync', () => {
   describe('When calling constructor', () => {
-    it('Should return a QueryAsync', () => {
+    it('Should return a ItiririAsync', () => {
       const source = [];
-      const q = queryAsync(fromArray(source));
+      const q = itiririAsync(fromArray(source));
 
       const methods = [
         'entries', 'keys', 'values', 'forEach', 'concat', 'prepend',
@@ -27,7 +27,7 @@ describe('QueryAsync', () => {
 
     it('Iteration should be deferred', async () => {
       const source = new SpyAsyncIterable(fromArray([1, 2]));
-      await queryAsync(source);
+      await itiririAsync(source);
 
       expect(source.wasIterated).to.be.false;
     });

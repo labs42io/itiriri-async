@@ -1,6 +1,6 @@
 import { expect } from 'chai';
+import { default as itiririAsync } from '../../lib';
 import { isAsyncIterable } from '../../lib/utils/isAsyncIterable';
-import { queryAsync } from '../../lib/QueryAsync';
 import { empty, numbers } from '../helpers/asyncGenerators';
 
 describe('utils/isAsyncIterable', () => {
@@ -14,9 +14,9 @@ describe('utils/isAsyncIterable', () => {
       expect(isAsyncIterable(numbers(1, 1))).to.be.true;
     });
   });
-  describe('When called on QueryAsync', () => {
+  describe('When called on ItiririAsync', () => {
     it('Should return true', async () => {
-      expect(isAsyncIterable(queryAsync(empty()))).to.be.true;
+      expect(isAsyncIterable(itiririAsync(empty()))).to.be.true;
     });
   });
   describe('When called on Number', () => {

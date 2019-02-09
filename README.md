@@ -3,29 +3,36 @@
 [![Build Status](https://travis-ci.org/labs42io/itiriri-async.svg)](https://travis-ci.org/labs42io/itiriri-async)
 [![Coverage Status](https://coveralls.io/repos/github/labs42io/itiriri-async/badge.svg)](https://coveralls.io/github/labs42io/itiriri-async)
 
-A library for asynchronous iteration.
+Next generation library to manipulate [asynchronous iterators](https://github.com/tc39/proposal-async-iteration).
 
 ```ts
 import * as WebRequest from 'web-request';
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
-async function* generator() {
+type ToDo = {
+  id: number,
+  userId: number,
+  title: string,
+  completed: boolean,
+};
+
+async function* todosAsync() {
   let id = 1;
   while (true) {
-    yield WebRequest.json<any>('https://jsonplaceholder.typicode.com/todos/' + id++);
+    yield await WebRequest.json<ToDo>(`https://jsonplaceholder.typicode.com/todos/${id++}`);
   }
 }
 
-async function first2Uncompleted() {
-  const q = await queryAsync(generator())
+async function showTop2ToDos(): Promise<void> {
+  const todos = await itiririAsync(todosAsync())
     .filter(x => !x.completed)
-    .map(x => x.title)
     .take(2)
     .awaitAll();
-  console.log(q.toArray());
+
+  console.log(todos.toArray());
 }
 
-first2Uncompleted();
+showTop2ToDos();
 // [ 'delectus aut autem', 'quis ut nam facilis et officia qui' ]
 ```
 
@@ -42,7 +49,14 @@ $ npm install 'itiriri-async' --save
 Importing:
 
 ```javascript
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
+```
+
+## Running tests
+
+```javascript
+$ npm install
+$ npm test
 ```
 
 ---
@@ -50,7 +64,7 @@ import { queryAsync } from 'itiriri-async';
 ## Complete list of methods
 
 * [average](#average)
-* [awaitAll](#awaitAll)
+* [awaitAll](#awaitall)
 * [concat](#concat)
 * [distinct](#distinct)
 * [entries](#entries)
@@ -107,7 +121,7 @@ For a sequence with no elements returns `undefined`.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator1() {
   yield* [41, 42, 43];
@@ -117,13 +131,14 @@ async function* generator2() {
   yield* [{value: 1}, {value: 2}];
 }
 
-queryAsync(generator1()).average()  // returns Promise<42>
-queryAsync(generator2()).average(elem => elem.value) // returns Promise<1.5>
+itiririAsync(generator1()).average()  // returns Promise<42>
+itiririAsync(generator2()).average(elem => elem.value) // returns Promise<1.5>
 ```
 
 ### `awaitAll`
 
-Await for all elements an return IterableQuery.
+Awaits for all elements an returns `IterableQuery`.
+The ruterned iterable is a sync [`itiriri`](https://npmjs.com/package/itiriri) iterable.
 
 > Syntax
 
@@ -134,14 +149,18 @@ awaitAll(): Promise<IterableQuery<T>>
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [41, 40, 43];
 }
 
-const q = queryAsync(generator()).awaitAll()  // returns IterableQuery([41, 40, 43])
-q.sort(); // returns: [40, 41, 43]
+// ...
+const numbers = await itiririAsync(generator()).awaitAll();
+// returns IterableQuery([41, 40, 43])
+
+numbers.sort().toArray();
+// returns: [40, 41, 43]
 ```
 
 ### `concat`
@@ -163,7 +182,7 @@ concat(other: AsyncIterable<T>): AsyncIterableQuery<T>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator1() {
   yield* [1, 2, 3];
@@ -174,19 +193,19 @@ async function* generator2() {
 }
 
 (async function() {
-  const q = await queryAsync(generator1()).concat(generator2()).awaitAll();
+  const q = await itiririAsync(generator1()).concat(generator2()).awaitAll();
   q.toArray();   // returns [1, 2, 3, 4, 5]
-})()
+})();
 
 (async function() {
-  const q = await queryAsync(generator1()).concat([2, 1]).awaitAll();
+  const q = await itiririAsync(generator1()).concat([2, 1]).awaitAll();
   q.toArray();   // returns [1, 2, 3, 2, 1]
-})()
+})();
 
 (async function() {
-  const q = await queryAsync(generator1()).concat(-1).awaitAll();
+  const q = await itiririAsync(generator1()).concat(-1).awaitAll();
   q.toArray();   // returns [1, 2, 3, -1]
-})()
+})();
 ```
 
 `concat` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -208,14 +227,14 @@ distinct<S>(selector: (element: T) => S): AsyncIterableQuery<T>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3, 3, 3, 4, 2];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).distinct().awaitAll();
+  const q = await itiririAsync(generator()).distinct().awaitAll();
   q.toArray();   // returns [1, 2, 3, 4]
 })();
 ```
@@ -235,14 +254,14 @@ entries(): AsyncIterableQuery<[number, T]>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* ['Bob', 'Alice'];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).entries().awaitAll();
+  const q = await itiririAsync(generator()).entries().awaitAll();
   q.toArray();   // returns [[0, 'Bob'], [1, 'Alice']]
 })();
 ```
@@ -265,17 +284,18 @@ every(predicate: (element: T, index: number) => boolean): Promise<boolean>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
+
 async function* generator() {
   yield* [1, 4, 3, 0];
 }
 
 (async function () {
-  await queryAsync(generator()).every(x => x >= 0); // true
+  await itiririAsync(generator()).every(x => x >= 0); // true
 })();
 
 (async function () {
-  await queryAsync(generator()).every(x => x > 0); // false
+  await itiririAsync(generator()).every(x => x > 0); // false
 })();
 ```
 
@@ -297,7 +317,7 @@ exclude<S>(others: Iterable<T>, selector: (element: T) => S): AsyncIterableQuery
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator1() {
   yield* [2, 0, 1, 8, 2];
@@ -308,12 +328,12 @@ async function* generator2() {
 }
 
 (async function () {
-  const q = await queryAsync(generator1()).exclude([0, 1]).awaitAll();
+  const q = await itiririAsync(generator1()).exclude([0, 1]).awaitAll();
   q.toArray(); // returns [2, 8, 2]
 })();
 
 (async function () {
-  const q = await queryAsync(generator2()).exclude([{ id: 2 }], x => x.id).awaitAll();
+  const q = await itiririAsync(generator2()).exclude([{ id: 2 }], x => x.id).awaitAll();
   q.toArray(); // returns [{id: 1}]
 })();
 ```
@@ -336,19 +356,19 @@ filter(predicate: (element: T, index: number) => boolean): AsyncIterableQuery<T>
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3, 4, 5];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).filter(elem => elem < 3).awaitAll();
+  const q = await itiririAsync(generator()).filter(elem => elem < 3).awaitAll();
   q.toArray(); // returns [1, 2]
 })();
 
 (async function () {
-  const q = await queryAsync(generator()).filter(elem => elem > 10).awaitAll();
+  const q = await itiririAsync(generator()).filter(elem => elem > 10).awaitAll();
   q.toArray(); // returns []
 })();
 ```
@@ -373,18 +393,18 @@ If no element satisfies the predicate, returns `undefined`.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3, 4, 5];
 }
 
 (async function () {
-  await queryAsync(generator()).find(elem => elem > 2); // returns 3
+  await itiririAsync(generator()).find(elem => elem > 2); // returns 3
 })();
 
 (async function () {
-  await queryAsync(generator()).find(elem => elem > 10); // returns undefined
+  await itiririAsync(generator()).find(elem => elem > 10); // returns undefined
 })();
 ```
 
@@ -406,18 +426,18 @@ If no element satisfies the predicate, returns `-1`.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3, 4, 5];
 }
 
 (async function () {
-  await queryAsync(generator()).find(elem => elem > 2); // returns 2
+  await itiririAsync(generator()).find(elem => elem > 2); // returns 2
 })();
 
 (async function () {
-  await queryAsync(generator()).find(elem => elem > 10); // returns -1
+  await itiririAsync(generator()).find(elem => elem > 10); // returns -1
 })();
 ```
 
@@ -439,18 +459,18 @@ If no element satisfies the predicate, returns `undefined`.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3, 4, 5];
 }
 
 (async function () {
-  await queryAsync(generator()).findLast(elem => elem > 2); // returns 5
+  await itiririAsync(generator()).findLast(elem => elem > 2); // returns 5
 })();
 
 (async function () {
-  await queryAsync(generator()).findLast(elem => elem > 10); // returns undefined
+  await itiririAsync(generator()).findLast(elem => elem > 10); // returns undefined
 })();
 ```
 
@@ -467,23 +487,23 @@ findLastIndex(predicate: (element: T, index: number) => boolean): Promise<number
 > Parameters
 * `predicate` - *(required)* function to test for each element
 
-If not present, returns -1.
+If not present, returns `-1`.
 
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3, 4, 5];
 }
 
 (async function () {
-  await queryAsync(generator()).findLastIndex(elem => elem > 2); // returns 4
+  await itiririAsync(generator()).findLastIndex(elem => elem > 2); // returns 4
 })();
 
 (async function () {
-  await queryAsync(generator()).findLastIndex(elem => elem > 10); // returns -1
+  await itiririAsync(generator()).findLastIndex(elem => elem > 10); // returns -1
 })();
 ```
 
@@ -502,7 +522,7 @@ For an empty sequence returns `undefined`.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator1() {
   yield* [1, 2, 3, 4, 5];
@@ -513,11 +533,11 @@ async function* generator2() {
 }
 
 (async function () {
-  await queryAsync(generator1()).first(); // returns 1
+  await itiririAsync(generator1()).first(); // returns 1
 })();
 
 (async function () {
-  await queryAsync(generator2()).first(); // returns undefined
+  await itiririAsync(generator2()).first(); // returns undefined
 })();
 ```
 
@@ -537,14 +557,14 @@ flat<T>(selector?: (element: T, index: number) => AsyncIterable<S>): AsyncIterab
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [[1, 2, 3], [4, 5]];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).flat().awaitAll();
+  const q = await itiririAsync(generator()).flat().awaitAll();
   q.toArray(); // returns [1, 2, 3, 4, 5]
 })();
 ```
@@ -567,14 +587,14 @@ forEach(action: (element: T, index: number) => void): Promise<void>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  queryAsync(generator()).forEach(elem => console.log(elem));
+  await itiririAsync(generator()).forEach(elem => console.log(elem));
 })();
 // 1
 // 2
@@ -611,14 +631,16 @@ the `joinSelector` function will be called with an empty array.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).groupJoin([1, 2, 3, 1, 1, 2], x => x, x => x, (x, y) => ({ x, y })).awaitAll();
+  const q = await itiririAsync(generator())
+    .groupJoin([1, 2, 3, 1, 1, 2], x => x, x => x, (x, y) => ({ x, y }))
+    .awaitAll();
   q.toArray();
 })();
 //[ { x: 1, y: [ 1, 1, 1 ] },
@@ -648,15 +670,15 @@ includes(element: T, fromIndex: number): Promise<boolean>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  await queryAsync(generator()).includes(2); // returns: true
-  await queryAsync(generator()).includes(4); // returns: false
+  await itiririAsync(generator()).includes(2); // returns: true
+  await itiririAsync(generator()).includes(4); // returns: false
 })();
 ```
 
@@ -681,15 +703,15 @@ When an element is not found, returns -1.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  await queryAsync(generator()).indexOf(2); // returns: 1
-  await queryAsync(generator()).indexOf(4); // returns: -1
+  await itiririAsync(generator()).indexOf(2); // returns: 1
+  await itiririAsync(generator()).indexOf(4); // returns: -1
 })();
 ```
 
@@ -711,14 +733,16 @@ intersect<S>(other: Iterable<T>, selector: (element: T) => S): AsyncIterableQuer
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).intersect([1, 2, 4]).awaitAll();
+  const q = await itiririAsync(generator())
+    .intersect([1, 2, 4])
+    .awaitAll();
   q.toArray(); // returns: [1, 2]
 })();
 ```
@@ -751,14 +775,16 @@ The `join` method works as an sql inner join.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).join([1, 1, 2], x => x, x => x, (x, y) => ({ x, y })).awaitAll();
+  const q = await itiririAsync(generator())
+    .join([1, 1, 2], x => x, x => x, (x, y) => ({ x, y }))
+    .awaitAll();
   q.toArray(); // returns: [ { x: 1, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 2 } ]
 })();
 ```
@@ -778,14 +804,14 @@ keys(): AsyncIterableQuery<number>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* ['a', 'b', 'c'];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).keys().awaitAll();
+  const q = await itiririAsync(generator()).keys().awaitAll();
   q.toArray(); // returns: [0, 1, 2]
 })();
 ```
@@ -807,14 +833,14 @@ For an empty sequence returns `undefined`.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3, -2];
 }
 
 (async function () {
-  await queryAsync(generator()).last(); // returns: -2
+  await itiririAsync(generator()).last(); // returns: -2
 })();
 ```
 
@@ -839,13 +865,14 @@ When an element is not found, returns -1.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
+
 async function* generator() {
   yield* [1, 2, 3, 2, 1];
 }
 
 (async function () {
-  await queryAsync(generator()).lastIndexOf(2); // returns: 3
+  await itiririAsync(generator()).lastIndexOf(2); // returns: 3
 })();
 ```
 
@@ -877,14 +904,14 @@ the `joinSelector` function is called with an `undefined` right value.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  const q = await queryAsync(generator())
+  const q = await itiririAsync(generator())
     .leftJoin([2, 3, 4, 2], n => n, n => n, (a, b) => `${a}-${b || '#'}`)
     .awaitAll();
   q.toArray(); // returns ['1-#', '2-2', '2-2', '3-3']
@@ -901,7 +928,7 @@ Returns the number of elements in a sequence.
 
 ```ts
 length(): Promise<number>;
-length(predicate: (element: T, index: number) => boolean): <number>;
+length(predicate: (element: T, index: number) => boolean): Promise<number>;
 ```
 
 > Parameters
@@ -910,14 +937,14 @@ length(predicate: (element: T, index: number) => boolean): <number>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  await queryAsync(generator()).length(); // return: 3
+  await itiririAsync(generator()).length(); // returns 3
 })();
 ```
 
@@ -937,9 +964,20 @@ map<S>(selector: (element: T, index: number) => S): AsyncIterableQuery<S>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
-queryAsync([1, 2, 3]).map(elem => elem * 10).toArray(); // returns [10, 20, 30]
+async function* generator() {
+  yield* [1, 2, 3];
+}
+
+function x10(numbers: AsyncIterable<number>) {
+  return itiririAsync(numbers).map(n => n * 10);
+}
+
+(async function(){
+  const numbers = await x10(generator()).awaitAll();
+  console.log(numbers); // [10, 20, 30]
+})();
 ```
 
 `map` *is a deferred method and is executed only when the result sequence is iterated.*
@@ -966,15 +1004,18 @@ If sequence is empty, returns `undefined`.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
-
-async function* generator() {
-  yield* [1, 2, 3];
+async function* generator1() {
+  yield* [1, 42, 3];
 }
 
+async function* generator2() {
+  yield* [];
+}
+
+
 (async function () {
-  const q = await queryAsync(generator()).map(x => x * 10).awaitAll();
-  q.toArray(); // returns [10, 20, 30]
+  await itiririAsync(generator1()).max(); // returns 42
+  await itiririAsync(generator2()).max(); // returns undefined
 })();
 ```
 
@@ -1000,7 +1041,7 @@ If sequence is empty, returns `undefined`.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator1() {
   yield* [1, -2, 3];
@@ -1010,10 +1051,9 @@ async function* generator2() {
   yield* [];
 }
 
-
 (async function () {
-  await queryAsync(generator1()).min(); // returns -1
-  await queryAsync(generator2()).min(); // returns undefined
+  await itiririAsync(generator1()).min(); // returns -1
+  await itiririAsync(generator2()).min(); // returns undefined
 })();
 ```
 
@@ -1035,15 +1075,15 @@ If index is out of the range, returns `undefined` .
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, -2, 3];
 }
 
 (async function () {
-  await queryAsync(generator()).nth(2); // returns: 3
-  await queryAsync(generator()).nth(3); // returns: undefined
+  await itiririAsync(generator()).nth(2); // returns: 3
+  await itiririAsync(generator()).nth(3); // returns: undefined
 })();
 ```
 
@@ -1066,19 +1106,19 @@ prepend(other: AsyncIterable<T>): AsyncIterableQuery<T>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, -2, 3];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).prepend(4).awaitAll();
+  const q = await itiririAsync(generator()).prepend(4).awaitAll();
   q.toArray(); // returns: [4, 1, -2, 3]
 })();
 
 (async function () {
-  const q = await queryAsync(generator()).prepend([0, 4]).awaitAll();
+  const q = await itiririAsync(generator()).prepend([0, 4]).awaitAll();
   q.toArray(); // returns: [0, 4, 1, -2, 3]
 })();
 ```
@@ -1094,12 +1134,12 @@ Applies a function against an accumulator and each element *(from left to right)
 ```ts
 reduce(
     callback: (accumulator: T, current: T, index: number) => T,
-  ): Promise<any>;
+  ): Promise<T>;
 
 reduce<S>(
     callback: (accumulator: S, current: T, index: number) => S,
     initialValue: S,
-  ): Promise<any>;
+  ): Promise<S>;
 ```
 
 > Parameters
@@ -1114,7 +1154,7 @@ Calling `reduce` on an empty sequence without an initial value throws an error.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
@@ -1122,7 +1162,7 @@ async function* generator() {
 
 (async function () {
   // 5 + 10 + 20 + 30
-  await queryAsync(generator()).reduce((accum, elem) => accum + elem * 10, 5); // returns: 65
+  await itiririAsync(generator()).reduce((accum, elem) => accum + elem * 10, 5); // returns 65
 })();
 ```
 
@@ -1144,19 +1184,19 @@ When *count* is greater than actual number of elements, results in an empty sequ
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).skip(1).awaitAll();
+  const q = await itiririAsync(generator()).skip(1).awaitAll();
   q.toArray(); // returns: [2, 3]
 })();
 
 (async function () {
-  const q = await queryAsync(generator()).skip(10).awaitAll();
+  const q = await itiririAsync(generator()).skip(10).awaitAll();
   q.toArray(); // returns: []
 })();
 ```
@@ -1182,14 +1222,14 @@ The `end` index is not included in the result.
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3, 3, 4];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).slice(2, 4).awaitAll();
+  const q = await itiririAsync(generator()).slice(2, 4).awaitAll();
   q.toArray(); // returns: [3, 3]
 })();
 ```
@@ -1212,15 +1252,15 @@ some(predicate: (element: T, index: number) => boolean): Promise<boolean>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3, -3, 4, 0];
 }
 
 (async function () {
-  await queryAsync(generator()).some(x => x < 0); // returns: true
-  await queryAsync(generator()).some(x => x > 5); // returns: false
+  await itiririAsync(generator()).some(x => x < 0); // returns: true
+  await itiririAsync(generator()).some(x => x > 5); // returns: false
 })();
 ```
 
@@ -1243,19 +1283,19 @@ Optionally, a function can be provided to apply a transformation and map each el
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator1() {
   yield* [1, 2, 3];
 }
 
 async function* generator2() {
-  yield* [{val: 3}, {val: 5}];
+  yield* [{ val: 3 }, { val: 5 }];
 }
 
 (async function () {
-  await queryAsync(generator1()).sum(); // returns: 6
-  await queryAsync(generator2()).sum(x => x.val); // returns: 8
+  await itiririAsync(generator1()).sum(); // returns: 6
+  await itiririAsync(generator2()).sum(x => x.val); // returns: 8
 })();
 ```
 
@@ -1275,19 +1315,19 @@ take(count: number): AsyncIterableQuery<T>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 2, 3];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).take(2).awaitAll();
+  const q = await itiririAsync(generator()).take(2).awaitAll();
   q.toArray(); // returns: [1, 2]
 })();
 
 (async function () {
-  const q = await queryAsync(generator()).take(0).awaitAll();
+  const q = await itiririAsync(generator()).take(0).awaitAll();
   q.toArray(); // returns: []
 })();
 ```
@@ -1312,19 +1352,19 @@ union<S>(other: AsyncIterable<T>, selector: (element: T) => S): AsyncIterableQue
 Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator1() {
   yield* [1, 2, 3];
 }
 
 async function* generator2() {
-  yield* [4, 5];
+  yield* [3, 4, 5];
 }
 
 (async function () {
-  const q = await queryAsync(generator1()).union(generator2()).awaitAll();
-  q.toArray(); // returns: [1, 2, 3, 4, 5]
+  const q = await itiririAsync(generator1()).union(generator2()).awaitAll();
+  q.toArray(); // returns [1, 2, 3, 4, 5]
 })();
 ```
 
@@ -1343,14 +1383,14 @@ values(): AsyncIterableQuery<T>;
 > Example
 
 ```ts
-import { queryAsync } from 'itiriri-async';
+import itiririAsync from 'itiriri-async';
 
 async function* generator() {
   yield* [1, 0, 2, 3];
 }
 
 (async function () {
-  const q = await queryAsync(generator()).values().awaitAll();
+  const q = await itiririAsync(generator()).values().awaitAll();
   q.toArray(); // [1, 0, 2, 3]
 })();
 ```
