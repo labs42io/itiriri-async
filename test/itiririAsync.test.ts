@@ -5,7 +5,7 @@ import { SpyAsyncIterable } from './helpers/SpyAsyncIterable';
 
 describe('ItiririAsync', () => {
   describe('When calling constructor', () => {
-    it('Should return a ItiririAsync', () => {
+    it('Should return an ItiririAsync object', () => {
       const source = [];
       const q = itiririAsync(fromArray(source));
 
