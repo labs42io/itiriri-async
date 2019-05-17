@@ -19,8 +19,8 @@ export class Gulpfile {
    * Cleans build folder.
    */
   @Task()
-  clean(cb: Function) {
-    return del(['./build/**', './coverage/**'], cb);
+  clean() {
+    return del(['./build/**', './coverage/**']);
   }
 
   /**
@@ -98,8 +98,8 @@ export class Gulpfile {
    * Clears the directory with compiled files.
    */
   @Task()
-  packageClearCompileDirectory(cb: Function) {
-    return del(['build/package/lib/**'], cb);
+  packageClearCompileDirectory() {
+    return del(['build/package/lib/**']);
   }
 
   /**

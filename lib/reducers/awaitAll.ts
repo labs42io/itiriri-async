@@ -1,4 +1,4 @@
-import { IterableQuery, query } from 'itiriri';
+import { default as itiriri, IterableQuery } from 'itiriri';
 
 export async function awaitAll<TElement>(
   source: AsyncIterable<TElement>,
@@ -9,5 +9,5 @@ export async function awaitAll<TElement>(
     buffer.push(element);
   }
 
-  return query(buffer);
+  return itiriri(buffer);
 }

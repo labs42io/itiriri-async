@@ -38,6 +38,8 @@ export default function itiririAsync<T>(source: AsyncIterable<T>): AsyncIterable
   return new ItiririAsync(source);
 }
 
+export { AsyncIterableQuery };
+
 class ItiririAsync<T> implements AsyncIterableQuery<T>{
   constructor(private readonly source: AsyncIterable<T>) {
   }
